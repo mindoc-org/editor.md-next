@@ -1,0 +1,247 @@
+/* 对话框 */
+.emd-dialog-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.emd-dialog {
+  position: absolute;
+  border: 1px solid var(--emd-border);
+  border-radius: 8px;
+  background: var(--emd-bg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  max-width: calc(100% - 24px);
+}
+
+.emd-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--emd-border);
+  cursor: move;
+  user-select: none;
+}
+
+.emd-dialog-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.emd-dialog-close {
+  border: none;
+  background: none;
+  color: var(--emd-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.emd-dialog-close:hover {
+  color: var(--emd-fg);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.emd-dialog-body {
+  max-height: 70vh;
+  overflow: auto;
+  padding: 14px;
+  font-size: 14px;
+}
+
+.emd-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--emd-border);
+}
+
+.emd-dialog-btn {
+  padding: 5px 16px;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  background: var(--emd-bg);
+  color: var(--emd-fg);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.emd-dialog-btn:hover {
+  border-color: var(--emd-accent);
+  color: var(--emd-accent);
+}
+
+.emd-dialog-btn-primary {
+  background: var(--emd-accent);
+  border-color: var(--emd-accent);
+  color: #fff;
+}
+
+.emd-dialog-btn-primary:hover {
+  color: #fff;
+  filter: brightness(1.08);
+}
+
+/* 表单 */
+.emd-form-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.emd-form-label {
+  flex: none;
+  width: 72px;
+  color: var(--emd-muted);
+  font-size: 13px;
+  text-align: right;
+}
+
+.emd-form-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  background: var(--emd-bg);
+  color: var(--emd-fg);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.emd-form-input:focus {
+  outline: none;
+  border-color: var(--emd-accent);
+}
+
+/* 行内错误提示（替代阻塞式 alert） */
+.emd-form-error {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(207, 34, 46, 0.4);
+  border-radius: 6px;
+  background: rgba(207, 34, 46, 0.07);
+  color: #cf222e;
+  font-size: 13px;
+}
+
+.emd-align-group {
+  display: flex;
+  gap: 14px;
+}
+
+/* tabs */
+.emd-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--emd-border);
+}
+
+.emd-tab {
+  padding: 6px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--emd-muted);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.emd-tab-active {
+  color: var(--emd-accent);
+  border-bottom-color: var(--emd-accent);
+}
+
+.emd-hidden {
+  display: none !important;
+}
+
+.emd-upload-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--emd-muted);
+  min-height: 18px;
+}
+
+/* 网格（emoji / html-entities） */
+.emd-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.emd-grid-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  background: var(--emd-bg);
+  color: var(--emd-fg);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.emd-grid-cell:hover {
+  border-color: var(--emd-accent);
+}
+
+.emd-grid-cell-active {
+  border-color: var(--emd-accent);
+  background: rgba(9, 105, 218, 0.1);
+  box-shadow: 0 0 0 1px var(--emd-accent) inset;
+}
+
+.emd-grid-category {
+  flex-basis: 100%;
+  margin: 8px 0 2px;
+  font-weight: 600;
+  color: var(--emd-muted);
+  font-size: 12px;
+}
+
+.emd-entities-grid .emd-grid-cell {
+  font-family: monospace;
+}
+
+/* 内嵌编辑器 */
+.emd-embedded-cm {
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+}
+
+.emd-embedded-cm .cm-editor {
+  height: 200px;
+  font-size: 13px;
+}
+
+.emd-embedded-cm .cm-editor.cm-focused {
+  outline: none;
+}
+
+/* 帮助/关于 */
+.emd-help-content {
+  padding: 0 !important;
+}
+
+.emd-info-dialog h3 {
+  margin: 0 0 10px;
+}
+
+.emd-info-dialog small {
+  color: var(--emd-muted);
+}
+
+/* 拖拽时禁止选中文本 */
+body.emd-user-unselect {
+  user-select: none;
+}

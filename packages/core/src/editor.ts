@@ -3,8 +3,10 @@
  * 组装 CM6 视图、渲染管线、预览面板与同步滚动；对外暴露新 API。
  * config() 支持原位重建：teardown 内部结构后用新配置重新 setup。
  */
-import { EventEmitter, debounce } from '@editormd-next/utils'
+import { EventEmitter, debounce, uploadFile } from '@editormd-next/utils'
 import type { Debounced } from '@editormd-next/utils'
+import type { UploadResult } from '@editormd-next/utils'
+import { EditorSelection } from '@codemirror/state'
 import { EditorState as CmEditorState } from '@codemirror/state'
 import type { Compartment } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
@@ -21,6 +23,7 @@ import type { ScrollSyncHandle } from './preview/sync-scroll'
 import { postRenderPreview } from './preview/post-render'
 import { Toolbar } from './toolbar/toolbar'
 import type { Toolbar as ToolbarInstance } from './toolbar/toolbar'
+import { openRegisteredDialog } from './dialogs/registry'
 import { resolveLang } from './i18n'
 import { normalizeOptions } from './normalize'
 import type { EditorEvents } from './types/events'
@@ -175,11 +178,43 @@ export class EditorMD {
     return this
   }
 
-  // --------------------------------------------------------------- 对话框与视图模式（P5/P7 完整实现）
+  // --------------------------------------------------------------- 对话框与上传
 
-  /** 按名称打开对话框（P5 起提供全部对话框；当前为占位） */
-  openDialog(_name: string): void {
-    console.warn(`[editormd-next] dialog "${_name}" is not implemented yet (P5)`)
+  /** 按名称打开对话框（link/referenceLink/image/codeBlock/table/emoji/…） */
+  openDialog(name: string): void {
+    openRegisteredDialog(this, name)
+  }
+
+  /** 跳转到指定行（1 基；支持 'first'/'last'），并同步预览滚动 */
+  gotoLine(line: number | 'first' | 'last'): this {
+    const total = this.cm.state.doc.lines
+    const n = line === 'first' ? 1 : line === 'last' ? total : Math.max(1, Math.min(total, Math.round(line)))
+    const lineInfo = this.cm.state.doc.line(n)
+    this.cm.dispatch({
+      selection: EditorSelection.cursor(lineInfo.from),
+      scrollIntoView: true,
+      annotations: markProgrammatic().annotations,
+    })
+    // 预览按比例跟随
+    const ratio = total > 1 ? (n - 1) / (total - 1) : 0
+    this.previewPane?.scrollToRatio(ratio)
+    this.cm.focus()
+    return this
+  }
+
+  /** 上传图片文件（响应协议 {success,url,message}，兼容原版服务端） */
+  async uploadImage(file: File, onProgress?: (percent: number) => void): Promise<UploadResult> {
+    const cfg = this.options.upload
+    if (!cfg.url) {
+      return { success: 0, message: 'upload URL is not configured (upload.url)' }
+    }
+    return uploadFile({
+      url: cfg.url,
+      file,
+      fieldName: cfg.fieldName,
+      withCredentials: cfg.withCredentials,
+      onProgress,
+    })
   }
 
   /** 全窗口 HTML 预览（P7 完整实现） */

@@ -56,17 +56,17 @@
 - [x] 30+ 快捷键 + disabledKeys 屏蔽 + F9/F10/F11 窗口级监听（实测 Ctrl-B/Ctrl-2）
 - [x] CM6 搜索面板接入（i18n 短语汉化实测通过）
 
-## P5 对话框
+## P5 对话框 ✅
 
-- [ ] dialog 框架（拖拽/遮罩/zIndex 递增/lockScreen/loading）
-- [ ] link / reference-link 对话框
-- [ ] image 对话框（URL / 上传 双 tab）
-- [ ] code-block（语言选择 + 内嵌 CM6 + 主题选择）
-- [ ] preformatted-text（内嵌 CM6）
-- [ ] table（行列 + 对齐）
-- [ ] emoji 网格（四 tab 多选）
-- [ ] html-entities 网格
-- [ ] goto-line / help（内置 help.md）/ info（关于）
+- [x] dialog 框架（拖拽/遮罩/zIndex 递增/lockScreen/loading）
+- [x] link / reference-link 对话框
+- [x] image 对话框（URL / 上传 双 tab）
+- [x] code-block（语言选择 + 内嵌 CM6 + 主题选择）
+- [x] preformatted-text（内嵌 CM6）
+- [x] table（行列 + 对齐）
+- [x] emoji 网格（四 tab 多选）
+- [x] html-entities 网格
+- [x] goto-line / help（内置 help.md）/ info（关于）
 
 ## P6 图片上传
 

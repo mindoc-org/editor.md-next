@@ -22,16 +22,19 @@ export interface UploadOptions {
   fields?: Record<string, string>
   /** 0~100 进度回调 */
   onProgress?: (percent: number) => void
+  /** 跨域携带 cookie */
+  withCredentials?: boolean
   signal?: AbortSignal
 }
 
 export function uploadFile(options: UploadOptions): Promise<UploadResult> {
-  const { url, file, fieldName = 'editormd-image-file', fields = {}, onProgress, signal } = options
+  const { url, file, fieldName = 'editormd-image-file', fields = {}, onProgress, withCredentials, signal } = options
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open('POST', url, true)
     xhr.responseType = 'text'
+    xhr.withCredentials = withCredentials === true
     if (signal) {
       signal.addEventListener('abort', () => xhr.abort(), { once: true })
     }

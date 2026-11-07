@@ -77,8 +77,9 @@ export const zhTw: LangDict = {
     },
     referenceLink: {
       title: '新增引用連結',
-      url: '定義標識',
-      urlTitle: '引用標識',
+      url: '地址',
+      urlTitle: '標題',
+      label: '標識',
       urlEmpty: '錯誤：引用定義標識不能為空。',
     },
     image: {

@@ -77,8 +77,9 @@ export const en: LangDict = {
     },
     referenceLink: {
       title: 'Add reference link',
-      url: 'Definition label',
-      urlTitle: 'Reference label',
+      url: 'URL',
+      urlTitle: 'Title',
+      label: 'Label',
       urlEmpty: 'Error: the definition label cannot be empty.',
     },
     image: {

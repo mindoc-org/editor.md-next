@@ -10,6 +10,8 @@ export interface LangLinkDialog {
   title: string
   url: string
   urlTitle: string
+  /** 引用链接的标识名（仅 referenceLink 使用） */
+  label?: string
   urlEmpty: string
 }
 

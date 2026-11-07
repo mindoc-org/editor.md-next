@@ -6,6 +6,8 @@ export type { EditorState } from './editor'
 
 export { defaults, VERSION } from './defaults'
 export { registerLang, listLangs, resolveLang } from './i18n'
+export { registerDialog } from './dialogs/registry'
+export type { Dialog, DialogOptions, DialogButton } from './dialogs/dialog'
 
 export type { EditorEvents } from './types/events'
 export type { LangDict } from './types/lang'

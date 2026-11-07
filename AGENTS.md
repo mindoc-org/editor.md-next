@@ -35,6 +35,7 @@ scripts/                              构建辅助脚本
 - 注释与文档字符串用中文；标识符用英文。
 - 面向用户的文档一律放 `docs/`；开发过程文档放 `ai-docs/`。不要混淆两者。
 - 不引入 jQuery；DOM 操作用 `@editormd-next/utils` 的 dom 封装。
+- **禁止 `window.alert`/`confirm`/`prompt` 等阻塞式原生弹窗**（会阻塞 JS 线程，用户明确要求）：校验错误用对话框内 `.emd-form-error` 行内提示（`showErrorHint`）。
 - 第三方重依赖（KaTeX/mermaid/markmap）一律 CDN 懒加载，禁止打进包体；hljs/markdown-it/codemirror 允许打包。
 
 ## 构建产物（core）

@@ -77,8 +77,9 @@ export const zhCn: LangDict = {
     },
     referenceLink: {
       title: '添加引用链接',
-      url: '定义标识',
-      urlTitle: '引用标识',
+      url: '地址',
+      urlTitle: '标题',
+      label: '标识',
       urlEmpty: '错误：引用定义标识不能为空。',
     },
     image: {
