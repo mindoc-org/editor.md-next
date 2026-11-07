@@ -4,7 +4,7 @@ import { CLASS_PREFIX } from '../types/common'
 import type { WidthOrHeight } from '../types/common'
 import type { MountedDom } from './mount'
 
-function toCssSize(value: WidthOrHeight): string {
+export function toCssSize(value: WidthOrHeight): string {
   return typeof value === 'number' ? `${value}px` : value
 }
 

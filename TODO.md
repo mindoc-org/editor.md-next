@@ -68,21 +68,21 @@
 - [x] html-entities 网格
 - [x] goto-line / help（内置 help.md）/ info（关于）
 
-## P6 图片上传
+## P6 图片上传（对话框上传已并入 P5；粘贴/拖拽完成）✅
 
-- [ ] XHR/FormData 上传（字段 editormd-image-file，响应 {success,url,message}）
-- [ ] formats 白名单校验 + 错误提示
-- [ ] 粘贴 / 拖拽图片插入（增强，原版无）
+- [x] XHR/FormData 上传（字段 editormd-image-file，响应 {success,url,message}）
+- [x] formats 白名单校验 + 错误提示
+- [x] 粘贴 / 拖拽图片插入（增强，原版无）
 
-## P7 模式与杂项
+## P7 模式与杂项 ✅
 
-- [ ] watch / unwatch / preview 模式切换（全屏预览 + 关闭按钮）
-- [ ] fullscreen（类原生全屏语义，ESC 退出）
-- [ ] gotoLine（数字/first/last + 预览滚动同步）
-- [ ] autoHeight、readOnly、placeholder、autoFocus
-- [ ] saveHTML（隐藏 html textarea）、appendMarkdown
-- [ ] 多实例与动态创建
-- [ ] EditorMD.renderTo() 静态渲染（替代 markdownToHTML）
+- [x] watch / unwatch / preview 模式切换（全屏预览 + 关闭按钮）
+- [x] fullscreen（类原生全屏语义，ESC 退出）
+- [x] gotoLine（数字/first/last + 预览滚动同步）
+- [x] autoHeight、readOnly、placeholder、autoFocus
+- [x] saveHTML（隐藏 html textarea）、appendMarkdown
+- [x] 多实例与动态创建
+- [x] EditorMD.renderTo() 静态渲染（替代 markdownToHTML）
 
 ## P8 构建产物
 

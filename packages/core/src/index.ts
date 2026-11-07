@@ -3,6 +3,7 @@ import './styles/index.css'
 
 export { EditorMD } from './editor'
 export type { EditorState } from './editor'
+export { renderTo } from './render-to'
 
 export { defaults, VERSION } from './defaults'
 export { registerLang, listLangs, resolveLang } from './i18n'

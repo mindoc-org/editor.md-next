@@ -67,7 +67,7 @@
   word-wrap: break-word;
 }
 
-/* autoHeight：容器高度随内容增长（P7 完善） */
+/* autoHeight：容器高度随内容增长 */
 .editormd-next-auto-height {
   height: auto !important;
 }
@@ -79,4 +79,43 @@
 .editormd-next-auto-height .emd-preview {
   height: auto;
   overflow: visible;
+}
+
+/* 全窗口预览模式 */
+.editormd-next-previewing .editormd-next-editor {
+  display: none !important;
+}
+
+.editormd-next-previewing .editormd-next-preview-host {
+  width: 100% !important;
+  display: block !important;
+  border-left: none;
+}
+
+.editormd-next-preview-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 50;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  background: var(--emd-bg);
+  color: var(--emd-muted);
+  cursor: pointer;
+}
+
+.editormd-next-preview-close:hover {
+  color: var(--emd-fg);
+}
+
+/* 全屏模式 */
+.editormd-next-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 900;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0;
 }

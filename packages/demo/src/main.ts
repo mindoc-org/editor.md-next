@@ -76,6 +76,8 @@ console.log('[demo] editor ready', { version: 'P2', markdown: editor.getMarkdown
 declare global {
   interface Window {
     __editor: EditorMD
+    EditorMD: typeof EditorMD
   }
 }
 window.__editor = editor
+window.EditorMD = EditorMD

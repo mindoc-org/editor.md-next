@@ -3,7 +3,7 @@
  * 组装 CM6 视图、渲染管线、预览面板与同步滚动；对外暴露新 API。
  * config() 支持原位重建：teardown 内部结构后用新配置重新 setup。
  */
-import { EventEmitter, debounce, uploadFile } from '@editormd-next/utils'
+import { EventEmitter, debounce, setStyles, uploadFile } from '@editormd-next/utils'
 import type { Debounced } from '@editormd-next/utils'
 import type { UploadResult } from '@editormd-next/utils'
 import { EditorSelection } from '@codemirror/state'
@@ -13,7 +13,7 @@ import type { EditorView } from '@codemirror/view'
 import { createEditorView, markProgrammatic } from './cm/create-view'
 import { themeExtension } from './cm/themes'
 import { buildShortcutKeymap, bindWindowKeys } from './cm/shortcuts'
-import { applyContainerSize, layout } from './lifecycle/layout'
+import { applyContainerSize, layout, toCssSize } from './lifecycle/layout'
 import { mountDom } from './lifecycle/mount'
 import type { MountedDom } from './lifecycle/mount'
 import { MarkdownEngine } from './markdown/engine'
@@ -21,9 +21,12 @@ import { PreviewPane } from './preview/pane'
 import { bindScrollSync } from './preview/sync-scroll'
 import type { ScrollSyncHandle } from './preview/sync-scroll'
 import { postRenderPreview } from './preview/post-render'
+import { renderTo } from './render-to'
 import { Toolbar } from './toolbar/toolbar'
 import type { Toolbar as ToolbarInstance } from './toolbar/toolbar'
 import { openRegisteredDialog } from './dialogs/registry'
+import { pasteDropExtension } from './features/paste-drop'
+import { enterFullscreen, enterPreviewMode, exitFullscreen, exitPreviewMode } from './features/view-modes'
 import { resolveLang } from './i18n'
 import { normalizeOptions } from './normalize'
 import type { EditorEvents } from './types/events'
@@ -37,9 +40,26 @@ export interface EditorState {
   watching: boolean
   loaded: boolean
   destroyed: boolean
+  /** 全窗口预览中 */
+  previewing: boolean
+  /** 全屏中 */
+  fullscreen: boolean
+}
+
+/** 窗口级按键监听辅助 */
+function onWindowKey(key: string, handler: () => void): () => void {
+  const listener = (event: KeyboardEvent): void => {
+    if (event.key === key) handler()
+  }
+  window.addEventListener('keydown', listener)
+  return () => window.removeEventListener('keydown', listener)
 }
 
 export class EditorMD {
+  /** 静态渲染：把 markdown 渲染为只读 HTML（替代原版 editormd.markdownToHTML） */
+  static renderTo(target: string | HTMLElement, options: EditorUserOptions = {}): HTMLElement {
+    return renderTo(target, options)
+  }
   options!: EditorOptions
   /** 当前语言字典（i18n 运行时切换用） */
   lang!: LangDict
@@ -47,7 +67,7 @@ export class EditorMD {
   cm!: EditorView
   dom!: MountedDom
 
-  state: EditorState = { watching: false, loaded: false, destroyed: false }
+  state: EditorState = { watching: false, loaded: false, destroyed: false, previewing: false, fullscreen: false }
 
   /** 事件总线：on/off/once/emit */
   readonly emitter = new EventEmitter<EditorEvents>()
@@ -217,14 +237,24 @@ export class EditorMD {
     })
   }
 
-  /** 全窗口 HTML 预览（P7 完整实现） */
-  togglePreviewMode(): void {
-    console.warn('[editormd-next] preview mode is not implemented yet (P7)')
+  /** 全窗口 HTML 预览切换（ESC 退出） */
+  togglePreviewMode(): this {
+    if (this.state.previewing) {
+      exitPreviewMode(this)
+    } else {
+      enterPreviewMode(this)
+    }
+    return this
   }
 
-  /** 全屏（P7 完整实现） */
-  toggleFullscreen(): void {
-    console.warn('[editormd-next] fullscreen is not implemented yet (P7)')
+  /** 全屏切换（ESC 退出） */
+  toggleFullscreen(): this {
+    if (this.state.fullscreen) {
+      exitFullscreen(this)
+    } else {
+      enterFullscreen(this)
+    }
+    return this
   }
 
   focus(): this {
@@ -258,7 +288,7 @@ export class EditorMD {
   private setup(target: string | HTMLElement, userOptions: EditorUserOptions): void {
     this.options = normalizeOptions(userOptions)
     this.lang = resolveLang(this.options.i18n)
-    this.state = { watching: false, loaded: false, destroyed: false }
+    this.state = { watching: false, loaded: false, destroyed: false, previewing: false, fullscreen: false }
 
     const container = typeof target === 'string' ? this.resolveTarget(target) : target
     this.initialClassName = container.className
@@ -278,6 +308,7 @@ export class EditorMD {
         buildShortcutKeymap(this),
         // CM6 搜索面板等内置 UI 的本地化短语
         CmEditorState.phrases.of(this.lang.search ?? {}),
+        ...(this.options.upload.image ? [pasteDropExtension(this)] : []),
       ],
     )
     this.cm = view
@@ -309,7 +340,12 @@ export class EditorMD {
 
     this.bindWindowEvents()
     this.unbinds.push(...bindWindowKeys(this))
-    applyContainerSize(this.dom, this.options.width, this.options.height)
+    // autoHeight：高度交给内容撑开
+    if (this.options.editor.autoHeight) {
+      setStyles(this.dom.container, { width: toCssSize(this.options.width), height: 'auto' })
+    } else {
+      applyContainerSize(this.dom, this.options.width, this.options.height)
+    }
     layout(this.dom, this.state.watching, this.options.preview.enable)
 
     // 初始渲染 + load 事件
@@ -380,5 +416,13 @@ export class EditorMD {
     })
     observer.observe(this.dom.container)
     this.unbinds.push(() => observer.disconnect())
+
+    // ESC：先退全窗口预览，再退全屏（对齐原版行为）
+    this.unbinds.push(
+      onWindowKey('Escape', () => {
+        if (this.state.previewing) exitPreviewMode(this)
+        else if (this.state.fullscreen) exitFullscreen(this)
+      }),
+    )
   }
 }
