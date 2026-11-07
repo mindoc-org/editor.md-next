@@ -53,6 +53,8 @@ export const defaults: EditorOptions = {
     },
     taskList: true,
     emoji: true,
+    emojiGithubPath: 'https://www.webpagefx.com/tools/emoji-cheat-sheet/graphics/emojis/',
+    emojiTwemojiPath: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/',
     tex: false,
     mermaid: true,
     mindmap: true,

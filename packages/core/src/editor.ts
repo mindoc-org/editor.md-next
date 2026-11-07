@@ -14,6 +14,7 @@ import { MarkdownEngine } from './markdown/engine'
 import { PreviewPane } from './preview/pane'
 import { bindScrollSync } from './preview/sync-scroll'
 import type { ScrollSyncHandle } from './preview/sync-scroll'
+import { postRenderPreview } from './preview/post-render'
 import { resolveLang } from './i18n'
 import { normalizeOptions } from './normalize'
 import type { EditorEvents } from './types/events'
@@ -166,7 +167,9 @@ export class EditorMD {
     const container = typeof target === 'string' ? this.resolveTarget(target) : target
     this.initialClassName = container.className
     this.dom = mountDom(container, this.options)
-    this.engine = new MarkdownEngine(this.options.markdown)
+    this.engine = new MarkdownEngine(this.options.markdown, {
+      codeHighlight: this.options.preview.codeHighlight,
+    })
 
     const { view } = createEditorView(this.dom.editorHost, this.options, {
       onInput: () => this.emitter.emit('input', undefined),
@@ -226,13 +229,28 @@ export class EditorMD {
     return el
   }
 
-  /** 渲染管线：markdown → 引擎 → 预览/textarea → change 事件 */
+  /** 渲染管线：markdown → 引擎 → 预览/textarea → 后处理 → change 事件 */
   renderNow(): void {
     const markdown = this.getMarkdown()
-    const html = this.engine.render(markdown)
+    const { html, toc } = this.engine.render(markdown)
     this.lastHtml = html
     if (this.previewPane && this.state.watching) {
       this.previewPane.render(html)
+      const md = this.options.markdown
+      postRenderPreview(this.previewPane.el, {
+        toc: md.toc.enable ? toc : [],
+        tocTitle: md.toc.title,
+        tocTitleFallback: this.lang.tocTitle,
+        tocStartLevel: md.toc.startLevel,
+        tocDropdown: md.toc.dropdown,
+        tocContainer: md.toc.container,
+        codeHighlight: this.options.preview.codeHighlight,
+        darkPreview: this.options.preview.theme === 'dark',
+        renderTex: md.tex,
+        renderMermaid: md.mermaid,
+        renderMindmap: md.mindmap,
+        cdn: this.options.cdn,
+      })
     }
     if (this.dom.textarea) this.dom.textarea.value = markdown
     if (this.dom.htmlTextarea) this.dom.htmlTextarea.value = html

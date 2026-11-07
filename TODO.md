@@ -33,19 +33,19 @@
 - [x] sync-scroll（百分比映射；浏览器实测双向同步通过）
 - [x] get/setMarkdown、事件总线、浅/深基础主题 CSS、destroy()
 
-## P3 渲染扩展
+## P3 渲染扩展 ✅
 
-- [ ] [TOC] / [TOCM] + 标题锚点 slug
-- [ ] taskList（可勾选样式）
-- [ ] emoji 四类（github / twemoji / fa / editormd-logo）+ 时间格式豁免
-- [ ] tex（$$..$$ 行内/独立行 + ```math 围栏 → KaTeX 懒加载渲染）
-- [ ] ```mermaid / ```mindmap 懒加载渲染
-- [ ] callouts（[info]/[warning]/[success]/[danger] 引用块）
-- [ ] atLink（@user）/ emailLink / 外链 target=_blank / javascript: 拦截
-- [ ] pageBreak（[========]）
-- [ ] 图片 #size=WxH / #align 语法
-- [ ] DOMPurify 消毒 + htmlDecode 开关
-- [ ] hljs 代码高亮 + 行号 + 预览代码折叠
+- [x] [TOC] / [TOCM] + 标题锚点 slug
+- [x] taskList（可勾选样式）
+- [x] emoji 四类（github / twemoji / fa / editormd-logo）+ 时间格式豁免
+- [x] tex（$$..$$ 行内/独立行 + ```math 围栏 → KaTeX 懒加载渲染）
+- [x] ```mermaid / ```mindmap 懒加载渲染
+- [x] callouts（[info]/[warning]/[success]/[danger] 引用块）
+- [x] atLink（@user）/ emailLink / 外链 target=_blank / javascript: 拦截
+- [x] pageBreak（[========]）
+- [x] 图片 #size=WxH / #align 语法
+- [x] DOMPurify 消毒 + htmlDecode 开关
+- [x] hljs 代码高亮 + 行号 + 预览代码折叠
 
 ## P4 工具栏与快捷键
 

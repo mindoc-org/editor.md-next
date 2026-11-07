@@ -80,6 +80,10 @@ export interface MarkdownConfig {
   toc: TocOptions
   taskList: boolean
   emoji: boolean
+  /** `:name:` github 风格 emoji 图片目录（路径 + name + .png） */
+  emojiGithubPath: string
+  /** `:tw-code:` twemoji 图片目录（路径 + code + .png） */
+  emojiTwemojiPath: string
   /** KaTeX 数学公式（CDN 懒加载） */
   tex: boolean
   /** ```mermaid 代码块（CDN 懒加载） */
@@ -122,7 +126,7 @@ export interface DialogConfig {
   maskOpacity: number
 }
 
-/** 重依赖 CDN 地址（懒加载）；置空串禁用对应特性加载 */
+/** 重依赖 CDN 地址（懒加载脚本/样式）；置空串禁用对应特性加载 */
 export interface CdnConfig {
   katexCss: string
   katexJs: string
