@@ -17,3 +17,18 @@ body {
   color: CanvasText;
   background: Canvas;
 }
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.page h1 small {
+  font-size: 0.5em;
+  color: gray;
+}
+
+.tip {
+  color: gray;
+  font-size: 13px;
+}

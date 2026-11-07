@@ -39,6 +39,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.20.4",
     "@codemirror/commands": "^6.10.0",
     "@codemirror/lang-markdown": "^6.5.2",
     "@codemirror/language": "^6.11.0",

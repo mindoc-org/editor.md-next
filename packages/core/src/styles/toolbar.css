@@ -1,0 +1,35 @@
+/* 工具栏基础样式（P4 实现完整工具栏时扩充） */
+.editormd-next-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px 8px;
+  user-select: none;
+}
+
+.editormd-next-toolbar a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 4px;
+  border-radius: 4px;
+  color: var(--emd-fg);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.editormd-next-toolbar a:hover {
+  background: rgba(9, 105, 218, 0.12);
+  color: var(--emd-accent);
+}
+
+.editormd-next-toolbar li.divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--emd-border);
+  list-style: none;
+}

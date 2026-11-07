@@ -1,2 +1,6 @@
-/* P0 smoke: css bundling + font asset handling */
+/* editor.md-next 样式入口 */
 @import 'font-awesome/css/font-awesome.min.css';
+@import './base.css';
+@import './toolbar.css';
+@import './preview.css';
+@import './themes.css';

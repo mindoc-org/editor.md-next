@@ -1,0 +1,27 @@
+/* 主题：编辑区/预览区 浅色（默认）与深色 */
+.editormd-next-editor-dark {
+  --emd-bg: #1e2127;
+  --emd-fg: #c9d1d9;
+  --emd-border: #30363d;
+  --emd-toolbar-bg: #21262d;
+  --emd-accent: #58a6ff;
+  --emd-muted: #8b949e;
+  --emd-code-bg: #2a2e37;
+  color-scheme: dark;
+}
+
+.emd-preview[data-emd-preview-theme='dark'] {
+  --emd-bg: #1e2127;
+  --emd-fg: #c9d1d9;
+  --emd-border: #30363d;
+  --emd-accent: #58a6ff;
+  --emd-muted: #8b949e;
+  --emd-code-bg: #2a2e37;
+  background: var(--emd-bg);
+  color: var(--emd-fg);
+  color-scheme: dark;
+}
+
+.emd-preview[data-emd-preview-theme='dark'] code {
+  background: rgba(110, 118, 129, 0.3);
+}

@@ -1,0 +1,82 @@
+/* 容器与分屏布局 */
+.editormd-next {
+  --emd-bg: #ffffff;
+  --emd-fg: #24292f;
+  --emd-border: #d0d7de;
+  --emd-toolbar-bg: #f6f8fa;
+  --emd-accent: #0969da;
+  --emd-muted: #57606a;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--emd-bg);
+  color: var(--emd-fg);
+  min-height: 200px;
+}
+
+.editormd-next *,
+.editormd-next *::before,
+.editormd-next *::after {
+  box-sizing: border-box;
+}
+
+.editormd-next-toolbar-slot {
+  flex: none;
+  border-bottom: 1px solid var(--emd-border);
+  background: var(--emd-toolbar-bg);
+}
+
+.editormd-next-toolbar-slot:empty {
+  display: none;
+}
+
+.editormd-next-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.editormd-next-editor {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.editormd-next-editor .cm-editor {
+  height: 100%;
+}
+
+.editormd-next-editor .cm-editor.cm-focused {
+  outline: none;
+}
+
+.editormd-next-preview-host {
+  min-width: 0;
+  border-left: 1px solid var(--emd-border);
+}
+
+.emd-preview {
+  height: 100%;
+  overflow: auto;
+  padding: 16px 24px;
+  word-wrap: break-word;
+}
+
+/* autoHeight：容器高度随内容增长（P7 完善） */
+.editormd-next-auto-height {
+  height: auto !important;
+}
+
+.editormd-next-auto-height .editormd-next-editor .cm-editor {
+  height: auto;
+}
+
+.editormd-next-auto-height .emd-preview {
+  height: auto;
+  overflow: visible;
+}

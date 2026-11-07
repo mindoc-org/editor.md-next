@@ -1,20 +1,29 @@
-// editor.md-next core — P0 smoke placeholder.
-// Verifies: workspace dep resolution, rolldown lib formats (es/umd/iife), css+font assets, d.ts emit.
-import { UTILS_VERSION } from '@editormd-next/utils'
+/** editor.md-next —— TypeScript + CodeMirror 6 重写的 Markdown 编辑器。 */
 import './styles/index.css'
 
-export interface SmokeOptions {
-  name?: string
-}
+export { EditorMD } from './editor'
+export type { EditorState } from './editor'
 
-export class Smoke {
-  readonly name: string
-  constructor(options: SmokeOptions = {}) {
-    this.name = options.name ?? 'editormd-next'
-  }
-  hello(): string {
-    return `${this.name} (utils@${UTILS_VERSION})`
-  }
-}
+export { defaults, VERSION } from './defaults'
+export { registerLang, listLangs, resolveLang } from './i18n'
 
-export const version = '0.1.0'
+export type { EditorEvents } from './types/events'
+export type { LangDict } from './types/lang'
+export type {
+  EditorOptions,
+  EditorUserOptions,
+  MarkdownConfig,
+  MarkdownItPlugin,
+  PreviewSectionConfig,
+  EditorSectionConfig,
+  ToolbarConfig,
+  ToolbarMode,
+  ToolbarSpec,
+  ToolbarHandler,
+  TocOptions,
+  UploadConfig,
+  DialogConfig,
+  CdnConfig,
+  I18nOption,
+} from './types/settings'
+export type { ThemeName, I18nCode, WidthOrHeight } from './types/common'

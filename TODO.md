@@ -22,16 +22,16 @@
 - [x] uploader.ts（XHR FormData 上传）
 - [x] vitest 单测（31 例全绿）
 
-## P2 core 骨架 MVP（demo 可跑）
+## P2 core 骨架 MVP（demo 可跑）✅
 
-- [ ] types（EditorOptions 分组结构 + Events 映射）
-- [ ] defaults（深合并基准配置）
-- [ ] i18n（zh-cn / en / zh-tw + 运行时切换）
-- [ ] CM6 集成（markdown 语言 + GFM、行号、换行、占位符）
-- [ ] DOM 挂载（container/toolbar 区/cm/preview 分屏）
-- [ ] 渲染管线（change → debounce → markdown-it → 预览）
-- [ ] sync-scroll（百分比映射 + TOC 高度补偿）
-- [ ] get/setMarkdown、事件总线、浅/深基础主题 CSS、destroy()
+- [x] types（EditorOptions 分组结构 + Events 映射）
+- [x] defaults（深合并基准配置）
+- [x] i18n（zh-cn / en / zh-tw + 运行时切换）
+- [x] CM6 集成（markdown 语言 + GFM、行号、换行、占位符）
+- [x] DOM 挂载（container/toolbar 区/cm/preview 分屏）
+- [x] 渲染管线（change → debounce → markdown-it → 预览）
+- [x] sync-scroll（百分比映射；浏览器实测双向同步通过）
+- [x] get/setMarkdown、事件总线、浅/深基础主题 CSS、destroy()
 
 ## P3 渲染扩展
 
