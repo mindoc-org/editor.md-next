@@ -115,3 +115,12 @@
 - [x] 跨域 iframe 上传回调模式
 - [x] 可选接入 @uiw/codemirror-themes 丰富 editor 主题
 - [x] vue/react 组件包装
+
+## 适配包（2026-11-08 追加）✅
+
+- [x] packages/vue：editor.md-next-vue（v-model + 事件转发 + 实例暴露，es/cjs + d.ts）
+- [x] packages/react：editor.md-next-react（受控/非受控 + onEvent + ref 句柄，StrictMode 安全）
+- [x] demo 增加 Vue3 / React 示例（v-model/onChange 联动实测通过）
+- [x] docs/vue3.md + docs/react.md
+- [x] 仓库引用统一 mindoc-org/editor.md-next（本地完成，未推送）
+- [ ] 待真实发布：npm publish（core/vue/react）、git push、gh-pages 部署

@@ -1,0 +1,51 @@
+{
+  "name": "editor.md-next-react",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "React component wrapper for editor.md-next",
+  "keywords": [
+    "markdown",
+    "editor",
+    "editormd",
+    "react",
+    "component"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mindoc-org/editor.md-next.git"
+  },
+  "homepage": "https://github.com/mindoc-org/editor.md-next",
+  "bugs": {
+    "url": "https://github.com/mindoc-org/editor.md-next/issues"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "editor.md-next": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0"
+  }
+}

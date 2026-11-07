@@ -70,11 +70,13 @@ pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 
 ```
 packages/
-  utils/   @editormd-next/utils   私有内部包（构建时打进 core）
-  core/    editor.md-next         发布包（npm + CDN 产物）
-  demo/    @editormd-next/demo    示例站（GitHub Pages）
-docs/                            用户文档（安装/配置/API/扩展语法/迁移…）
-ai-docs/                         开发文档（需求、架构决策、功能对照矩阵）
+  utils/   @editormd-next/utils    私有内部包（构建时打进 core）
+  core/    editor.md-next          发布包（npm + CDN 产物）
+  vue/     editor.md-next-vue      Vue 3 组件适配
+  react/   editor.md-next-react    React 组件适配
+  demo/    @editormd-next/demo     示例站（GitHub Pages）
+docs/                             用户文档（安装/配置/API/适配包/扩展语法/迁移…）
+ai-docs/                          开发文档（需求、架构决策、功能对照矩阵）
 ```
 
 ## License

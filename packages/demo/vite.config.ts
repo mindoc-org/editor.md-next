@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       'editor.md-next': fileURLToPath(new URL('../core/src/index.ts', import.meta.url)),
+      'editor.md-next-vue': fileURLToPath(new URL('../vue/src/index.ts', import.meta.url)),
+      'editor.md-next-react': fileURLToPath(new URL('../react/src/index.ts', import.meta.url)),
     },
   },
   // GitHub Pages 部署使用相对路径

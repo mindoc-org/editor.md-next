@@ -11,9 +11,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "editor.md-next": "workspace:*"
+    "editor.md-next": "workspace:*",
+    "editor.md-next-react": "workspace:*",
+    "editor.md-next-vue": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"
   }

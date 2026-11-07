@@ -16,15 +16,17 @@
 ## 目录与职责
 
 ```
-packages/utils  @editormd-next/utils   私有；通用工具（dom/事件/异步/加载器等）
-packages/core   editor.md-next         发布包；编辑器全部实现
-packages/demo   @editormd-next/demo    私有；示例站（GitHub Pages 部署）
-docs/                                  用户文档（安装、配置、API、扩展语法…）
-ai-docs/                               开发文档（需求、架构决策、功能对照矩阵）
-scripts/                              构建辅助脚本
+packages/utils  @editormd-next/utils    私有；通用工具（dom/事件/异步/加载器等）
+packages/core   editor.md-next          发布包；编辑器全部实现
+packages/vue    editor.md-next-vue      Vue 3 组件适配（发布包）
+packages/react  editor.md-next-react    React 组件适配（发布包）
+packages/demo   @editormd-next/demo     私有；示例站（GitHub Pages 部署）
+docs/                                   用户文档（安装、配置、API、扩展语法…）
+ai-docs/                                开发文档（需求、架构决策、功能对照矩阵）
+scripts/                               构建辅助脚本
 ```
 
-**依赖方向铁律**：`demo → core → utils`。`utils` 禁止 import `core`/`demo`；`core` 禁止 import `demo`。utils 不单独发布（构建时打包进 core），如未来要发布再改 `private`。
+**依赖方向铁律**：`demo → vue/react → core → utils`。`utils` 禁止 import 其他包；`core` 禁止 import 适配包/demo；适配包只允许 import `editor.md-next` 与各自框架（二者均外部化不打包）。utils 不单独发布（构建时打包进 core）。
 
 ## 编码规范
 

@@ -10,6 +10,8 @@ editor.md-next 是 [editor.md](https://github.com/pandao/editor.md) 的 TypeScri
 | [configuration.md](configuration.md) | 全部配置项说明 |
 | [api.md](api.md) | 实例方法与事件 |
 | [markdown-extensions.md](markdown-extensions.md) | 扩展语法（TOC/emoji/公式/图表/分页…） |
+| [vue3.md](vue3.md) | Vue 3 组件适配（editor.md-next-vue） |
+| [react.md](react.md) | React 组件适配（editor.md-next-react） |
 | [themes.md](themes.md) | 主题与自定义 |
 | [image-upload.md](image-upload.md) | 图片上传协议（兼容原版服务端） |
 | [i18n.md](i18n.md) | 多语言 |

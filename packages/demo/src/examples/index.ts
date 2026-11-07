@@ -9,6 +9,7 @@ import {
   tasksCallouts,
   upload,
 } from './features'
+import { reactExample, vue3Example } from './adapters'
 import type { Example } from './types'
 
 export const EXAMPLES: Example[] = [
@@ -26,4 +27,6 @@ export const EXAMPLES: Example[] = [
   multi,
   i18n,
   renderToExample,
+  vue3Example,
+  reactExample,
 ]
