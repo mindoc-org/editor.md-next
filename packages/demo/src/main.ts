@@ -1,5 +1,14 @@
 import './style.css'
+import { EditorMD } from 'editor.md-next'
 import { EXAMPLES } from './examples'
+
+// 便于控制台调试
+declare global {
+  interface Window {
+    EditorMD: typeof EditorMD
+  }
+}
+window.EditorMD = EditorMD
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
@@ -9,7 +18,7 @@ app.innerHTML = `
       <h1 class="demo-logo">editor.md-next</h1>
       <p class="demo-sub">TypeScript + CodeMirror 6</p>
       <nav class="demo-nav"></nav>
-      <a class="demo-home" href="https://github.com/gsw945/editor.md-next" target="_blank" rel="noopener noreferrer">GitHub →</a>
+      <a class="demo-home" href="https://github.com/mindoc-org/editor.md-next" target="_blank" rel="noopener noreferrer">GitHub →</a>
     </aside>
     <main class="demo-content"></main>
   </div>

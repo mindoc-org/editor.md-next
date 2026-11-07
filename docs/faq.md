@@ -28,4 +28,4 @@
 
 ## 如何参与开发？
 
-见仓库 [AGENTS.md](https://github.com/gsw945/editor.md-next/blob/main/AGENTS.md)（目录职责、编码规范、命令清单）与 [TODO.md](https://github.com/gsw945/editor.md-next/blob/main/TODO.md)（阶段进度）。
+见仓库 [AGENTS.md](https://github.com/mindoc-org/editor.md-next/blob/main/AGENTS.md)（目录职责、编码规范、命令清单）与 [TODO.md](https://github.com/mindoc-org/editor.md-next/blob/main/TODO.md)（阶段进度）。

@@ -24,7 +24,9 @@ export function fencePlugin(md: MarkdownIt): void {
     }
 
     if (lang === 'mermaid') {
-      return `<div class="emd-mermaid" data-emd-mermaid><pre class="emd-mermaid-src">${escapeHtml(token.content)}</pre></div>`
+      // 源文本放 data 属性，post-render 阶段以 textContent 写回再交给 mermaid.run
+      // （避免依赖 mermaid 对 innerHTML/实体的读取细节）
+      return `<div class="emd-mermaid" data-emd-mermaid-src="${escapeHtml(token.content)}"></div>`
     }
 
     if (lang === 'mindmap' || info.startsWith('mindmap>')) {

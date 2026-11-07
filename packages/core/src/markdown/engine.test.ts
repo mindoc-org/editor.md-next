@@ -64,7 +64,7 @@ describe('MarkdownEngine', () => {
 
   it('mermaid / mindmap 占位', () => {
     const { html } = createEngine().render('```mermaid\ngraph LR\n```\n\n```mindmap\n# root\n```')
-    expect(html).toContain('emd-mermaid')
+    expect(html).toContain('data-emd-mermaid-src')
     expect(html).toContain('data-emd-mindmap-src')
   })
 

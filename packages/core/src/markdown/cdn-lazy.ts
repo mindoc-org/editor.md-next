@@ -66,15 +66,20 @@ async function ensureMermaid(cdn: CdnConfig, dark: boolean): Promise<MermaidLike
   return mermaid
 }
 
-/** 渲染容器内所有 .emd-mermaid（源文本在 .emd-mermaid-src 中） */
+/** 渲染容器内所有 .emd-mermaid（源文本在 data-emd-mermaid-src 中） */
 export async function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = false): Promise<void> {
   const nodes = container.querySelectorAll<HTMLElement>('.emd-mermaid')
   if (nodes.length === 0) return
   const mermaid = await ensureMermaid(cdn, dark)
   if (!mermaid) return
+  const pending = [...nodes].filter((n) => n.dataset['emdMermaidRendered'] !== '1')
+  for (const node of pending) {
+    // 以原始文本写回，绕开转义/包裹层对 mermaid 解析的干扰
+    node.textContent = node.dataset['emdMermaidSrc'] ?? ''
+  }
   try {
-    await mermaid.run({ nodes: [...nodes].filter((n) => n.dataset['emdMermaidRendered'] !== '1'), suppressErrors: true })
-    for (const node of nodes) node.dataset['emdMermaidRendered'] = '1'
+    await mermaid.run({ nodes: pending, suppressErrors: true })
+    for (const node of pending) node.dataset['emdMermaidRendered'] = '1'
   } catch (error) {
     console.error('[editormd-next] mermaid render failed:', error)
   }

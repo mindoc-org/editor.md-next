@@ -184,10 +184,6 @@
   overflow-x: auto;
 }
 
-.emd-preview .emd-mermaid-src {
-  display: none;
-}
-
 .emd-preview .emd-mindmap {
   min-height: 200px;
   margin: 0 0 14px;

@@ -15,11 +15,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsw945/editor.md-next.git"
+    "url": "git+https://github.com/mindoc-org/editor.md-next.git"
   },
-  "homepage": "https://github.com/gsw945/editor.md-next",
+  "homepage": "https://github.com/mindoc-org/editor.md-next",
   "bugs": {
-    "url": "https://github.com/gsw945/editor.md-next/issues"
+    "url": "https://github.com/mindoc-org/editor.md-next/issues"
   },
   "main": "./dist/umd/index.umd.cjs",
   "module": "./dist/es/index.js",

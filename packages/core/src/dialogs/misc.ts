@@ -89,7 +89,7 @@ export function openInfoDialog(editor: EditorMD): Dialog {
     <div class="emd-info-dialog">
       <h3>editor.md-next <small>v${VERSION}</small></h3>
       <p>${lang.description}</p>
-      <p>${lang.homepage}: <a href="https://github.com/gsw945/editor.md-next" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+      <p>${lang.homepage}: <a href="https://github.com/mindoc-org/editor.md-next" target="_blank" rel="noopener noreferrer">GitHub</a></p>
     </div>
   `
 
