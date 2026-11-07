@@ -11,16 +11,16 @@
 - [x] README / AGENTS / TODO / ai-docs 骨架，scripts/check-lines.mjs
 - [x] 首次提交
 
-## P1 utils 包
+## P1 utils 包 ✅
 
-- [ ] dom.ts（元素查找/创建/class 操作/事件绑定）
-- [ ] event-emitter.ts（类型化 EventEmitter）
-- [ ] async.ts（debounce/throttle）
-- [ ] datetime.ts（dateFormat）
-- [ ] string.ts（trim/ucfirst/ucwords/escapeHtml/randomId/slugify）
-- [ ] loader.ts（CDN script/css 懒加载，带缓存与去重）
-- [ ] uploader.ts（XHR FormData 上传）
-- [ ] vitest 单测
+- [x] dom.ts（元素查找/创建/class 操作/事件绑定）
+- [x] event-emitter.ts（类型化 EventEmitter）
+- [x] async.ts（debounce/throttle）
+- [x] datetime.ts（dateFormat）
+- [x] string.ts（trim/ucfirst/ucwords/escapeHtml/randomId/slugify）
+- [x] loader.ts（CDN script/css 懒加载，带缓存与去重）
+- [x] uploader.ts（XHR FormData 上传）
+- [x] vitest 单测（31 例全绿）
 
 ## P2 core 骨架 MVP（demo 可跑）
 
