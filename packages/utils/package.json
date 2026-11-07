@@ -1,0 +1,12 @@
+{
+  "name": "@editormd-next/utils",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Internal shared utilities for editor.md-next (bundled into the core package at build time)",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

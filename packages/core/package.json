@@ -1,0 +1,59 @@
+{
+  "name": "editor.md-next",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Markdown editor in TypeScript with CodeMirror 6, successor of editor.md",
+  "keywords": [
+    "markdown",
+    "editor",
+    "editormd",
+    "codemirror",
+    "codemirror6",
+    "markdown-editor",
+    "typescript"
+  ],
+  "license": "MIT",
+  "main": "./dist/umd/index.umd.cjs",
+  "module": "./dist/es/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/umd/index.umd.cjs",
+      "default": "./dist/es/index.js"
+    },
+    "./css": "./dist/index.css",
+    "./dist/index.css": "./dist/index.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "build:cdn": "vite build --mode cdn && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.10.0",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.11.0",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/search": "^6.5.11",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.0",
+    "@lezer/highlight": "^1.2.1",
+    "dompurify": "^3.4.17",
+    "font-awesome": "4.7.0",
+    "highlight.js": "^11.12.0",
+    "markdown-it": "^15.0.3"
+  },
+  "devDependencies": {
+    "@editormd-next/utils": "workspace:*",
+    "codemirror": "^6.0.2"
+  }
+}

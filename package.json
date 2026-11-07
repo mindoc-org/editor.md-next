@@ -1,0 +1,31 @@
+{
+  "name": "@editormd-next/monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "editor.md-next — a Markdown editor rewritten in TypeScript (CodeMirror 6), inspired by editor.md",
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm -C packages/demo dev",
+    "build": "pnpm -r build",
+    "build:lib": "pnpm -C packages/core build",
+    "build:cdn": "pnpm -C packages/core build:cdn",
+    "demo:dev": "pnpm -C packages/demo dev",
+    "demo:build": "pnpm -C packages/demo build",
+    "demo:preview": "pnpm -C packages/demo preview",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:lines": "node scripts/check-lines.mjs",
+    "deploy:pages": "pnpm demo:build && gh-pages -d packages/demo/dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
+  }
+}
