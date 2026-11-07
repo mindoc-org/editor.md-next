@@ -91,11 +91,11 @@
 - [x] @font-face 精简（woff2/woff，裁掉 eot/svg/ttf）
 - [x] demo 内分别用 ESM import 与 CDN `<script>` 方式各冒烟一次
 
-## P9 demo 示例站
+## P9 demo 示例站（14 例）✅
 
-- [ ] 侧边导航 + 示例框架
-- [ ] ~18 个示例（基础/主题/emoji/tex/mermaid/mindmap/TOC/taskList/callout/上传 mock/对话框/事件/自定义工具栏/只读/renderTo/多实例/i18n/pageBreak）
-- [ ] gh-pages 部署脚本与说明
+- [x] 侧边导航 + 示例框架
+- [x] ~18 个示例（基础/主题/emoji/tex/mermaid/mindmap/TOC/taskList/callout/上传 mock/对话框/事件/自定义工具栏/只读/renderTo/多实例/i18n/pageBreak）
+- [x] gh-pages 部署脚本与说明
 
 ## P10 文档
 

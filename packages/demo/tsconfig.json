@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "editor.md-next": ["../core/src/index.ts"]
+    }
   },
   "include": ["src"]
 }

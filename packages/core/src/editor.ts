@@ -262,6 +262,28 @@ export class EditorMD {
     return this
   }
 
+  // --------------------------------------------------------------- 事件
+
+  /** 订阅事件，返回解绑函数 */
+  on<K extends keyof EditorEvents>(event: K, listener: (payload: EditorEvents[K]) => void): () => void {
+    return this.emitter.on(event, listener)
+  }
+
+  /** 订阅一次性事件 */
+  once<K extends keyof EditorEvents>(event: K, listener: (payload: EditorEvents[K]) => void): () => void {
+    return this.emitter.once(event, listener)
+  }
+
+  /** 解绑事件 */
+  off<K extends keyof EditorEvents>(event: K, listener?: (payload: EditorEvents[K]) => void): void {
+    this.emitter.off(event, listener)
+  }
+
+  /** 触发事件（自定义扩展事件用） */
+  emit<K extends keyof EditorEvents>(event: K, payload: EditorEvents[K]): void {
+    this.emitter.emit(event, payload)
+  }
+
   // --------------------------------------------------------------- 配置与销毁
 
   /**
