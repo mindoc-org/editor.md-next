@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>editor.md-next CDN smoke</title>
+  <link rel="stylesheet" href="../dist/index.css">
+  <style>body{margin:24px;font-family:sans-serif}#editor{height:420px}</style>
+</head>
+<body>
+  <h1>CDN smoke</h1>
+  <div id="editor"></div>
+  <script src="../dist/cdn/editormd-next.min.js"></script>
+  <script>
+    window.__smoke = { globalReady: typeof window.editormd !== 'undefined' };
+    const editor = new editormd.EditorMD('#editor', {
+      value: '# CDN 加载成功\n\n**粗体** :smile:\n',
+      height: 420,
+    });
+    window.__smoke.instance = typeof editor;
+    window.__smoke.markdown = editor.getMarkdown().includes('CDN');
+    window.__smoke.renderTo = typeof editormd.renderTo === 'function';
+  </script>
+</body>
+</html>

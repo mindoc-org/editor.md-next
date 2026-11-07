@@ -84,12 +84,12 @@
 - [x] 多实例与动态创建
 - [x] EditorMD.renderTo() 静态渲染（替代 markdownToHTML）
 
-## P8 构建产物
+## P8 构建产物 ✅
 
-- [ ] exports/files/sideEffects 定稿
-- [ ] es + umd + iife + index.css + assets + types/*.d.ts 全量出包
-- [ ] @font-face 精简（woff2/woff，裁掉 eot/svg/ttf）
-- [ ] demo 内分别用 ESM import 与 CDN `<script>` 方式各冒烟一次
+- [x] exports/files/sideEffects 定稿
+- [x] es + umd + iife + index.css + assets + types/*.d.ts 全量出包
+- [x] @font-face 精简（woff2/woff，裁掉 eot/svg/ttf）
+- [x] demo 内分别用 ESM import 与 CDN `<script>` 方式各冒烟一次
 
 ## P9 demo 示例站
 
