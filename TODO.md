@@ -47,14 +47,14 @@
 - [x] DOMPurify 消毒 + htmlDecode 开关
 - [x] hljs 代码高亮 + 行号 + 预览代码折叠
 
-## P4 工具栏与快捷键
+## P4 工具栏与快捷键 ✅
 
-- [ ] full / simple / mini 三模式 + dropdown 语法
-- [ ] 全部内置按钮 handlers（标题/粗斜/列表/表格/引用/时间/清理等）
-- [ ] 自定义 icons / handlers / titles / customIcons
-- [ ] autoFixed（页面滚动时工具栏固定）
-- [ ] 30+ 快捷键 + disabledKeys 屏蔽
-- [ ] CM6 搜索面板接入（i18n 短语汉化）
+- [x] full / simple / mini 三模式 + dropdown 语法（浏览器实测 38 按钮 + 标题下拉）
+- [x] 全部内置按钮 handlers（标题/粗斜/列表/引用/大小写/时间/清理/搜索等；对话框类走 openDialog 占位）
+- [x] 自定义 icons / handlers / titles / customIcons
+- [x] autoFixed（sticky 吸顶实现）
+- [x] 30+ 快捷键 + disabledKeys 屏蔽 + F9/F10/F11 窗口级监听（实测 Ctrl-B/Ctrl-2）
+- [x] CM6 搜索面板接入（i18n 短语汉化实测通过）
 
 ## P5 对话框
 

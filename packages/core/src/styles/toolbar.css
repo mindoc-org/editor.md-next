@@ -1,35 +1,90 @@
-/* 工具栏基础样式（P4 实现完整工具栏时扩充） */
+/* 工具栏 */
 .editormd-next-toolbar {
+  user-select: none;
+}
+
+/* autoFixed：sticky 吸顶 */
+.editormd-next-toolbar-fixed {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.emd-menu {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 2px;
+  margin: 0;
   padding: 4px 8px;
-  user-select: none;
+  list-style: none;
 }
 
-.editormd-next-toolbar a {
+.emd-menu li {
+  position: relative;
+}
+
+.emd-menu li.divider {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--emd-border);
+}
+
+/* '||' 之后的项右对齐 */
+.emd-menu li.emd-spacer {
+  flex: 1 1 auto;
+  min-width: 8px;
+}
+
+.emd-menu a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 26px;
   height: 26px;
-  padding: 0 4px;
+  padding: 0 5px;
   border-radius: 4px;
   color: var(--emd-fg);
+  font-size: 13px;
   text-decoration: none;
   cursor: pointer;
 }
 
-.editormd-next-toolbar a:hover {
+.emd-menu a:hover {
   background: rgba(9, 105, 218, 0.12);
   color: var(--emd-accent);
 }
 
-.editormd-next-toolbar li.divider {
-  width: 1px;
-  height: 18px;
-  margin: 0 4px;
-  background: var(--emd-border);
-  list-style: none;
+.emd-menu a .emd-icon-text {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 下拉组 */
+.emd-dropdown .emd-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  min-width: 64px;
+  padding: 4px;
+  border: 1px solid var(--emd-border);
+  border-radius: 6px;
+  background: var(--emd-bg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.emd-dropdown:hover .emd-dropdown-content,
+.emd-dropdown:focus-within .emd-dropdown-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.emd-dropdown .emd-dropdown-content a {
+  justify-content: flex-start;
+  min-width: 52px;
+  height: 26px;
 }

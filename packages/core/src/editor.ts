@@ -5,8 +5,12 @@
  */
 import { EventEmitter, debounce } from '@editormd-next/utils'
 import type { Debounced } from '@editormd-next/utils'
+import { EditorState as CmEditorState } from '@codemirror/state'
+import type { Compartment } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
 import { createEditorView, markProgrammatic } from './cm/create-view'
+import { themeExtension } from './cm/themes'
+import { buildShortcutKeymap, bindWindowKeys } from './cm/shortcuts'
 import { applyContainerSize, layout } from './lifecycle/layout'
 import { mountDom } from './lifecycle/mount'
 import type { MountedDom } from './lifecycle/mount'
@@ -15,11 +19,16 @@ import { PreviewPane } from './preview/pane'
 import { bindScrollSync } from './preview/sync-scroll'
 import type { ScrollSyncHandle } from './preview/sync-scroll'
 import { postRenderPreview } from './preview/post-render'
+import { Toolbar } from './toolbar/toolbar'
+import type { Toolbar as ToolbarInstance } from './toolbar/toolbar'
 import { resolveLang } from './i18n'
 import { normalizeOptions } from './normalize'
 import type { EditorEvents } from './types/events'
 import type { LangDict } from './types/lang'
 import type { EditorOptions, EditorUserOptions } from './types/settings'
+import type { ThemeName } from './types/common'
+import type { Extension } from '@codemirror/state'
+import { CLASS_PREFIX } from './types/common'
 
 export interface EditorState {
   watching: boolean
@@ -43,6 +52,8 @@ export class EditorMD {
   private engine!: MarkdownEngine
   private previewPane: PreviewPane | null = null
   private syncHandle: ScrollSyncHandle | null = null
+  private toolbar: ToolbarInstance | null = null
+  private themeCompartment: Compartment | null = null
   private debouncedRender: Debounced<() => void> | null = null
   private lastHtml = ''
   private unbinds: Array<() => void> = []
@@ -112,6 +123,7 @@ export class EditorMD {
     if (this.state.watching || !this.options.preview.enable) return this
     this.state.watching = true
     layout(this.dom, true, this.options.preview.enable)
+    this.toolbar?.syncWatchState()
     this.cm.focus()
     this.emitter.emit('watch', undefined)
     return this
@@ -122,6 +134,7 @@ export class EditorMD {
     if (!this.state.watching) return this
     this.state.watching = false
     layout(this.dom, false, this.options.preview.enable)
+    this.toolbar?.syncWatchState()
     this.cm.focus()
     this.emitter.emit('unwatch', undefined)
     return this
@@ -129,6 +142,54 @@ export class EditorMD {
 
   toggleWatch(): this {
     return this.state.watching ? this.unwatch() : this.watch()
+  }
+
+  // --------------------------------------------------------------- 主题
+
+  /** 切换编辑区主题（内置名称或 CM6 主题扩展） */
+  setEditorTheme(theme: ThemeName | Extension): this {
+    this.options.editor.theme = theme
+    if (this.themeCompartment) {
+      this.cm.dispatch({
+        effects: this.themeCompartment.reconfigure(themeExtension(theme)),
+      })
+    }
+    const dark = theme === 'dark'
+    this.dom.container.classList.toggle(`${CLASS_PREFIX}-editor-dark`, dark)
+    this.dom.container.classList.toggle(`${CLASS_PREFIX}-editor-default`, !dark)
+    return this
+  }
+
+  /** 切换预览区主题 */
+  setPreviewTheme(theme: ThemeName): this {
+    this.options.preview.theme = theme
+    if (this.previewPane) this.previewPane.el.dataset['emdPreviewTheme'] = theme
+    return this
+  }
+
+  /** 一键切换浅/深（changetheme 按钮） */
+  toggleTheme(): this {
+    const toDark = this.options.editor.theme !== 'dark'
+    this.setEditorTheme(toDark ? 'dark' : 'default')
+    this.setPreviewTheme(toDark ? 'dark' : 'default')
+    return this
+  }
+
+  // --------------------------------------------------------------- 对话框与视图模式（P5/P7 完整实现）
+
+  /** 按名称打开对话框（P5 起提供全部对话框；当前为占位） */
+  openDialog(_name: string): void {
+    console.warn(`[editormd-next] dialog "${_name}" is not implemented yet (P5)`)
+  }
+
+  /** 全窗口 HTML 预览（P7 完整实现） */
+  togglePreviewMode(): void {
+    console.warn('[editormd-next] preview mode is not implemented yet (P7)')
+  }
+
+  /** 全屏（P7 完整实现） */
+  toggleFullscreen(): void {
+    console.warn('[editormd-next] fullscreen is not implemented yet (P7)')
   }
 
   focus(): this {
@@ -171,12 +232,26 @@ export class EditorMD {
       codeHighlight: this.options.preview.codeHighlight,
     })
 
-    const { view } = createEditorView(this.dom.editorHost, this.options, {
-      onInput: () => this.emitter.emit('input', undefined),
-      onDocChange: () => this.debouncedRender?.(),
-    })
+    const { view, themeCompartment } = createEditorView(
+      this.dom.editorHost,
+      this.options,
+      {
+        onInput: () => this.emitter.emit('input', undefined),
+        onDocChange: () => this.debouncedRender?.(),
+      },
+      [
+        buildShortcutKeymap(this),
+        // CM6 搜索面板等内置 UI 的本地化短语
+        CmEditorState.phrases.of(this.lang.search ?? {}),
+      ],
+    )
     this.cm = view
+    this.themeCompartment = themeCompartment
     this.state.watching = this.options.watch && this.options.preview.enable
+
+    if (this.dom.toolbarSlot) {
+      this.toolbar = new Toolbar(this, this.dom.toolbarSlot)
+    }
 
     if (this.options.preview.enable) {
       this.previewPane = new PreviewPane(this.dom.previewHost)
@@ -198,6 +273,7 @@ export class EditorMD {
     }
 
     this.bindWindowEvents()
+    this.unbinds.push(...bindWindowKeys(this))
     applyContainerSize(this.dom, this.options.width, this.options.height)
     layout(this.dom, this.state.watching, this.options.preview.enable)
 
@@ -212,6 +288,8 @@ export class EditorMD {
 
   private teardown(): void {
     this.syncHandle?.destroy()
+    this.toolbar?.destroy()
+    this.toolbar = null
     for (const unbind of this.unbinds) unbind()
     this.unbinds = []
     this.debouncedRender?.cancel()

@@ -79,6 +79,8 @@ export interface LangDict {
   tocTitle: string
   /** 工具栏按钮提示文字（含快捷键说明） */
   toolbar: Record<string, string>
+  /** CM6 搜索面板短语（key 与 @codemirror/search phrases 一致） */
+  search: Record<string, string>
   buttons: LangButtons
   dialog: {
     link: LangLinkDialog

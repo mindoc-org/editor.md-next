@@ -1,0 +1,48 @@
+/** 工具栏图标：FontAwesome 类名与文本回退映射（对齐原版 toolbarIconsClass）。 */
+
+export const ICON_CLASSES: Record<string, string> = {
+  undo: 'fa-undo',
+  redo: 'fa-repeat',
+  bold: 'fa-bold',
+  del: 'fa-strikethrough',
+  italic: 'fa-italic',
+  quote: 'fa-quote-left',
+  ucwords: 'fa-font',
+  uppercase: 'fa-font',
+  lowercase: 'fa-font',
+  heading: 'fa-header',
+  'list-ul': 'fa-list-ul',
+  'list-ol': 'fa-list-ol',
+  hr: 'fa-minus',
+  link: 'fa-link',
+  'reference-link': 'fa-anchor',
+  image: 'fa-picture-o',
+  code: 'fa-code',
+  'preformatted-text': 'fa-file-code-o',
+  'code-block': 'fa-file-code-o',
+  table: 'fa-table',
+  datetime: 'fa-clock-o',
+  emoji: 'fa-smile-o',
+  'html-entities': 'fa-copyright',
+  pagebreak: 'fa-newspaper-o',
+  'goto-line': 'fa-terminal',
+  watch: 'fa-eye-slash',
+  unwatch: 'fa-eye',
+  preview: 'fa-desktop',
+  fullscreen: 'fa-arrows-alt',
+  clear: 'fa-eraser',
+  search: 'fa-search',
+  help: 'fa-question-circle',
+  changetheme: 'fa-adjust',
+  info: 'fa-info-circle',
+}
+
+/** 无图标类时的文本回退（h1~h6 等用大字号文本） */
+export const ICON_TEXTS: Record<string, string> = {
+  h1: 'H1',
+  h2: 'H2',
+  h3: 'H3',
+  h4: 'H4',
+  h5: 'H5',
+  h6: 'H6',
+}

@@ -32,6 +32,7 @@ export function createEditorView(
   host: HTMLElement,
   options: EditorOptions,
   handlers: { onInput: () => void; onDocChange: () => void },
+  extra: Extension[] = [],
 ): CmSetup {
   const cfg = options.editor
   const themeCompartment = new Compartment()
@@ -73,6 +74,7 @@ export function createEditorView(
     extensions.push(EditorState.readOnly.of(true), EditorView.editable.of(false))
   }
   extensions.push(...cfg.extensions)
+  extensions.push(...extra)
 
   const state = EditorState.create({ doc: options.value, extensions })
   const view = new EditorView({ state, parent: host })
