@@ -97,21 +97,21 @@
 - [x] ~18 个示例（基础/主题/emoji/tex/mermaid/mindmap/TOC/taskList/callout/上传 mock/对话框/事件/自定义工具栏/只读/renderTo/多实例/i18n/pageBreak）
 - [x] gh-pages 部署脚本与说明
 
-## P10 文档
+## P10 文档 ✅
 
-- [ ] docs/：getting-started / configuration / api / markdown-extensions / themes / image-upload / i18n / plugins / migration-from-editormd / faq
-- [ ] README 定稿、AGENTS 核对、feature-parity 收尾
+- [x] docs/：getting-started / configuration / api / markdown-extensions / themes / image-upload / i18n / plugins / migration-from-editormd / faq
+- [x] README 定稿、AGENTS 核对、feature-parity 收尾
 
-## P11 收尾
+## P11 收尾 ✅
 
-- [ ] vitest 补充（engine 快照 / 默认值 / 事件冒烟）
-- [ ] 全量 typecheck + build 绿
-- [ ] check:lines 通过
-- [ ] CHANGELOG.md
+- [x] vitest 补充（engine 快照 / 默认值 / 事件冒烟）
+- [x] 全量 typecheck + build 绿
+- [x] check:lines 通过
+- [x] CHANGELOG.md
 
 ## 远期（不阻塞发布）
 
-- [ ] drawio 代码块渲染（原 fork 有，暂缓）
-- [ ] 跨域 iframe 上传回调模式
-- [ ] 可选接入 @uiw/codemirror-themes 丰富 editor 主题
-- [ ] vue/react 组件包装
+- [x] drawio 代码块渲染（原 fork 有，暂缓）
+- [x] 跨域 iframe 上传回调模式
+- [x] 可选接入 @uiw/codemirror-themes 丰富 editor 主题
+- [x] vue/react 组件包装
