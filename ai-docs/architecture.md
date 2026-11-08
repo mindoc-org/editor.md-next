@@ -37,3 +37,12 @@
 - 根因：输入期间连续渲染使两次 `mermaid.run` 并发执行；mermaid 11 内部状态不可重入（内部 id 用时间戳生成会撞车）。
 - 修复：renderMermaidIn 引入 promise 串行队列；收集节点时立即标记 rendered（消除两次渲染收集窗口重叠导致的重复处理）；源文本继续走 data-emd-mermaid-src + textContent 注入。
 - 压测：36 次快速 setMarkdown（3 轮 × 12 次，4 种图交替）+ 示例编辑器并发渲染，0 个 error svg。
+
+## ADR-006 mermaid 真正根因与 emoji 三连修（2026-11-08）
+
+- **mermaid 真正根因**：DOMPurify 3.2+ 默认 `SAFE_FOR_XML` 会**剥掉值中含 `-->` 的属性**（mermaid 源文本必然含箭头）；时序图 `->>` 不匹配该模式所以一直正常，造成"看似随机"的假象。此前所有"渲染成功"探针都是假阳性——mermaid 错误炸弹 svg 没有 `.error` class。教训：探针必须检测炸弹文本本身（`Syntax error`），而非 svg 存在性。
+- 修复：mermaid/mindmap/tex 源文本统一 **base64 进 data 属性**（`markdown/data-attr.ts` 的 encode/decodeDataAttr），属性值中不再出现 `-->`，不削弱 SAFE_FOR_XML 安全默认。文本节点中的 `-->` 不受 SAFE_FOR_XML 影响，普通正文无损（已实测）。
+- **emoji 图源**：webpagefx CDN 已死 → 默认改 githubassets 官方源 + gemoji 别名→unicode 映射（`emoji-unicode.ts`，877 名中 858 个走 unicode 路径，其余 GitHub 专属 emoji 走名字路径）。
+- **时间豁免**：hh:mm:ss 先遮蔽-扫描-还原（原实现只测 name，导致 `12:30:45` 中 `:30:` 被转成图片）。
+- **logo 字形**：移植原版 `editormd.logo.css` 字形/尺寸类（此前 fonts.css 只声明了字体，没有字形映射）。
+- 诊断基建：mermaid 预解析失败会打 console 并写入 localStorage（`emd-mermaid-failure`），含确切源文本。

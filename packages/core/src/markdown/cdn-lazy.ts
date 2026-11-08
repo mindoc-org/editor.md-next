@@ -3,6 +3,7 @@
  * 页面已存在全局对象（window.katex / window.mermaid）时直接使用，与原版行为一致。
  */
 import { loadScript, loadStyle } from '@editormd-next/utils'
+import { decodeDataAttr } from './data-attr'
 import type { CdnConfig } from '../types/settings'
 
 /** KaTeX 最小结构类型（避免引入 @types/katex） */
@@ -39,7 +40,7 @@ export async function renderTexIn(container: HTMLElement, cdn: CdnConfig): Promi
   if (!katex) return
   for (const node of nodes) {
     if (node.dataset['emdTexRendered'] === '1') continue
-    const tex = node.dataset['tex'] ?? ''
+    const tex = decodeDataAttr(node.dataset['tex'] ?? '')
     const display = node.classList.contains('emd-tex-display')
     try {
       node.innerHTML = katex.renderToString(tex, { displayMode: display, throwOnError: false })
@@ -70,7 +71,7 @@ async function ensureMermaid(cdn: CdnConfig, dark: boolean): Promise<MermaidLike
 /** mermaid 渲染串行队列：mermaid.run 不可重入，并发调用会间歇性产生解析错误 */
 let mermaidQueue: Promise<void> = Promise.resolve()
 
-/** 渲染容器内所有 .emd-mermaid（源文本在 data-emd-mermaid-src 中） */
+/** 渲染容器内所有 .emd-mermaid（源文本 base64 存于 data-emd-mermaid-src） */
 export function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = false): Promise<void> {
   const nodes = container.querySelectorAll<HTMLElement>('.emd-mermaid')
   const pending = [...nodes].filter((n) => n.dataset['emdMermaidRendered'] !== '1')
@@ -79,7 +80,7 @@ export function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = f
   // 标记先行：防止两次渲染的收集窗口重叠导致同一节点被处理两次
   for (const node of pending) node.dataset['emdMermaidRendered'] = '1'
   // 以原始文本写回，绕开转义/包裹层对 mermaid 解析的干扰
-  for (const node of pending) node.textContent = node.dataset['emdMermaidSrc'] ?? ''
+  for (const node of pending) node.textContent = decodeDataAttr(node.dataset['emdMermaidSrc'] ?? '')
 
   const task = mermaidQueue.then(async () => {
     const mermaid = await ensureMermaid(cdn, dark)
@@ -108,7 +109,7 @@ export async function renderMindmapIn(container: HTMLElement, cdn: CdnConfig): P
 
   for (const node of nodes) {
     if (node.querySelector('script[type="text/template"]')) continue
-    const source = node.dataset['emdMindmapSrc'] ?? ''
+    const source = decodeDataAttr(node.dataset['emdMindmapSrc'] ?? '')
     const template = document.createElement('script')
     template.type = 'text/template'
     template.textContent = source

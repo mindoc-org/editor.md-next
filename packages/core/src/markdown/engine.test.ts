@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { MarkdownEngine } from './engine'
+import { decodeDataAttr } from './data-attr'
 import { defaults } from '../defaults'
 import type { MarkdownConfig } from '../types/settings'
 
@@ -56,16 +57,19 @@ describe('MarkdownEngine', () => {
     expect(html).toContain('fa-star')
   })
 
-  it('tex 钩子（data-tex 占位）', () => {
-    const { html } = createEngine({ tex: true }).render('行内 $$E=mc^2$$ 公式')
+  it('tex 钩子（data-tex base64 占位，含 --> 也不丢）', () => {
+    const { html } = createEngine({ tex: true }).render('行内 $$E=mc^2 \\to A --> B$$ 公式')
     expect(html).toContain('emd-tex')
-    expect(html).toContain('data-tex')
+    const m = /data-tex="([^"]+)"/.exec(html)!
+    expect(decodeDataAttr(m[1]!)).toContain('A --> B')
   })
 
-  it('mermaid / mindmap 占位', () => {
-    const { html } = createEngine().render('```mermaid\ngraph LR\n```\n\n```mindmap\n# root\n```')
-    expect(html).toContain('data-emd-mermaid-src')
-    expect(html).toContain('data-emd-mindmap-src')
+  it('mermaid / mindmap 占位（base64 data 属性，含 --> 也不丢）', () => {
+    const { html } = createEngine().render('```mermaid\ngraph LR\n  A --> B\n```\n\n```mindmap\n# root\n```')
+    const mermaidSrc = decodeDataAttr(/data-emd-mermaid-src="([^"]+)"/.exec(html)![1]!)
+    expect(mermaidSrc).toContain('A --> B')
+    const mindmapSrc = decodeDataAttr(/data-emd-mindmap-src="([^"]+)"/.exec(html)![1]!)
+    expect(mindmapSrc).toContain('# root')
   })
 
   it('链接安全：javascript: 不成链（markdown-it 解析层拒绝）+ 外链 _blank', () => {

@@ -63,8 +63,9 @@ export class MarkdownEngine {
     let html = this.md.render(markdown, env)
     const toc = ((env['emdToc'] as { tocItems?: TocItem[] } | undefined)?.tocItems ?? []) as TocItem[]
     if (this.sanitize) {
+      // 图表/公式的源文本走 base64 data 属性（SAFE_FOR_XML 不会剥），data-* 默认放行
       html = DOMPurify.sanitize(html, {
-        ADD_ATTR: ['target', 'align', 'width', 'height', 'data-tex', 'data-emd-toc', 'data-emd-mermaid', 'data-emd-mindmap-src', 'disabled'],
+        ADD_ATTR: ['target', 'align', 'width', 'height', 'disabled'],
       })
     }
     return { html, toc }
