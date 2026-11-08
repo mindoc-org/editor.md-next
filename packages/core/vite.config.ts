@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      sourcemap: true,
+      // npm 发布不需要 sourcemap（省 ~20MB）；调试走源码
+      sourcemap: false,
       // cdn 产物独立输出为自包含目录（js + css），与常规构建互不干扰
       outDir: isCdn ? 'dist/cdn' : 'dist',
       emptyOutDir: true,

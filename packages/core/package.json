@@ -64,5 +64,9 @@
   "devDependencies": {
     "@editormd-next/utils": "workspace:*",
     "codemirror": "^6.0.2"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

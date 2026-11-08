@@ -47,5 +47,9 @@
   "devDependencies": {
     "@types/react": "^19.0.0",
     "react": "^19.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }
