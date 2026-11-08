@@ -1,4 +1,5 @@
 import './style.css'
+import 'editor.md-next/css'
 import { EditorMD } from 'editor.md-next'
 import { EXAMPLES } from './examples'
 
