@@ -2,6 +2,7 @@
 import { addClass } from '@editormd-next/utils'
 import type { EditorMD } from '../editor'
 import { Dialog } from './dialog'
+import { githubEmojiSrc } from '../markdown/plugin-emoji'
 import {
   EMOJI_LOGOS,
   FONT_AWESOME_ICONS,
@@ -107,7 +108,7 @@ function buildGrid(editor: EditorMD, kind: EmojiKind): HTMLElement {
       heading.textContent = category.category
       grid.append(heading)
       for (const name of category.list) {
-        addItem(name, `<img class="emd-emoji" src="${githubPath}${name}.png" alt=":${name}:" loading="lazy" width="20" height="20">`)
+        addItem(name, `<img class="emd-emoji" src="${githubEmojiSrc(githubPath, name)}" alt=":${name}:" loading="lazy" width="20" height="20">`)
       }
     }
   } else if (kind === 'twemoji') {

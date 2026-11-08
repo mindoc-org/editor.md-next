@@ -12,6 +12,7 @@ interface KatexLike {
 
 interface MermaidLike {
   initialize(config: Record<string, unknown>): void
+  parse(text: string): Promise<boolean>
   run(options: { nodes?: Iterable<HTMLElement>; suppressErrors?: boolean }): Promise<void>
 }
 
@@ -83,6 +84,15 @@ export function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = f
   const task = mermaidQueue.then(async () => {
     const mermaid = await ensureMermaid(cdn, dark)
     if (!mermaid) return
+    // 诊断：预解析校验，失败时打印确切源文本（suppressErrors 会吞掉细节）
+    for (const node of pending) {
+      const text = node.textContent ?? ''
+      try {
+        await mermaid.parse(text)
+      } catch (error) {
+        console.error('[editormd-next] mermaid parse failed, source:', JSON.stringify(text), error)
+      }
+    }
     await mermaid.run({ nodes: pending, suppressErrors: true })
   })
   mermaidQueue = task.then(() => undefined, () => undefined)

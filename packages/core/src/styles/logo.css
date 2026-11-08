@@ -1,0 +1,79 @@
+/* editormd-logo 字形/尺寸类（源自 editor.md css/editormd.logo.css，MIT © pandao / IBM Skills Network）；字体声明见 fonts.css */
+.editormd-logo,
+.editormd-logo-1x,
+.editormd-logo-2x,
+.editormd-logo-3x,
+.editormd-logo-4x,
+.editormd-logo-5x,
+.editormd-logo-6x,
+.editormd-logo-7x,
+.editormd-logo-8x {
+  font-family: "editormd-logo";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  font-size: inherit;
+  line-height: 1;
+  display: inline-block;
+  text-rendering: auto;
+  vertical-align: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.editormd-logo:before,
+.editormd-logo-1x:before,
+.editormd-logo-2x:before,
+.editormd-logo-3x:before,
+.editormd-logo-4x:before,
+.editormd-logo-5x:before,
+.editormd-logo-6x:before,
+.editormd-logo-7x:before,
+.editormd-logo-8x:before {
+  content: "󡦇";
+  /* 
+  HTML Entity &#xe1987; 
+  example: <span class="editormd-logo">&#xe1987;</span>
+  */
+}
+
+.editormd-logo-1x {
+  font-size: 1em;
+}
+
+.editormd-logo-lg {
+  font-size: 1.2em;
+}
+
+.editormd-logo-2x {
+  font-size: 2em;
+}
+
+.editormd-logo-3x {
+  font-size: 3em;
+}
+
+.editormd-logo-4x {
+  font-size: 4em;
+}
+
+.editormd-logo-5x {
+  font-size: 5em;
+}
+
+.editormd-logo-6x {
+  font-size: 6em;
+}
+
+.editormd-logo-7x {
+  font-size: 7em;
+}
+
+.editormd-logo-8x {
+  font-size: 8em;
+}
+
+.editormd-logo-color {
+  color: #2196F3;
+}

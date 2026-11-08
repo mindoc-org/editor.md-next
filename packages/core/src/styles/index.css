@@ -1,6 +1,7 @@
 /* editor.md-next 样式入口 */
 @import './fonts.css';
 @import './fontawesome.css';
+@import './logo.css';
 @import './base.css';
 @import './toolbar.css';
 @import './preview.css';
