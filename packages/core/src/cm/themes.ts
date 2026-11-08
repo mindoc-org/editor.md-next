@@ -17,16 +17,20 @@ import type { ThemeName } from '../types/common'
 /**
  * 行/匹配背景色必须保持半透明（alpha < 1）：drawSelection 的选区层是
  * z-index:-2 后代，任何不透明行背景都会把它完全盖住（选区可用但不可见）。
- * 见 ai-docs/bugfix-cm6-selection-invisible.md；单测 themes.test.ts 守护此约束。
+ * 颜色可用 rgba() 或 8 位 hex（#RRGGBBAA）；新增背景色一律登记到这里，
+ * 由 themes.test.ts 逐个校验 alpha 并守护字段完整性。
+ * 见 ai-docs/bugfix-cm6-selection-invisible.md。
  */
 export const THEME_BG = {
   light: {
     activeLine: 'rgba(9, 105, 218, 0.04)',
     searchMatch: 'rgba(212, 167, 44, 0.22)',
+    selectionMatch: '#fae17d80',
   },
   dark: {
     activeLine: 'rgba(255, 255, 255, 0.055)',
     searchMatch: 'rgba(212, 167, 44, 0.25)',
+    selectionMatch: '#63533480',
   },
 } as const
 
@@ -46,7 +50,7 @@ const lightTheme = EditorView.theme({
   '.cm-activeLine': { backgroundColor: THEME_BG.light.activeLine },
   '.cm-gutters': { backgroundColor: '#ffffff', color: '#8c959f', border: 'none' },
   '.cm-activeLineGutter': { backgroundColor: '#f6f8fa', color: '#24292f' },
-  '.cm-selectionMatch': { backgroundColor: '#fae17d80' },
+  '.cm-selectionMatch': { backgroundColor: THEME_BG.light.selectionMatch },
   // 半透明（勿改回不透明色）：与 .cm-activeLine 同理，避免遮挡选区层
   '.cm-searchMatch': { backgroundColor: THEME_BG.light.searchMatch, outline: '1px solid #d4a72c66' },
 })
@@ -65,7 +69,7 @@ const darkTheme = EditorView.theme(
     '.cm-activeLine': { backgroundColor: THEME_BG.dark.activeLine },
     '.cm-gutters': { backgroundColor: '#1e2127', color: '#6e7681', border: 'none' },
     '.cm-activeLineGutter': { backgroundColor: '#2a2e37', color: '#c9d1d9' },
-    '.cm-selectionMatch': { backgroundColor: '#63533480' },
+    '.cm-selectionMatch': { backgroundColor: THEME_BG.dark.selectionMatch },
     '.cm-searchMatch': { backgroundColor: THEME_BG.dark.searchMatch, outline: '1px solid #d4a72c66' },
   },
   { dark: true },
