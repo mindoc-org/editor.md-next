@@ -63,7 +63,7 @@ new EditorMD('#editor', {
 })
 ```
 
-注意：核心包已自包含 CM6，宿主注入扩展时请安装**相同主版本**的 `@codemirror/*` 包，避免双实例。
+注意：从 0.2.0 起，core 的 `@codemirror/*` 与 `@lezer/*` 为 peer 依赖（安装时自动带上，全页共享同一份 CM6 实例），宿主注入的扩展可以与任意 CM6 生态包混用。0.1.x 版本的全打包产物下注入第三方 CM6 扩展会因双实例报错（`Unrecognized extension value`），请升级。
 
 ## 事件扩展
 

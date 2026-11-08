@@ -80,6 +80,7 @@ pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 | [editor.md-next](https://www.npmjs.com/package/editor.md-next) | [![npm](https://img.shields.io/npm/v/editor.md-next)](https://www.npmjs.com/package/editor.md-next) | 核心编辑器：ESM + UMD + CDN IIFE + `*.d.ts` + CSS |
 | [editor.md-next-vue](https://www.npmjs.com/package/editor.md-next-vue) | [![npm](https://img.shields.io/npm/v/editor.md-next-vue)](https://www.npmjs.com/package/editor.md-next-vue) | Vue 3 组件适配（v-model + 事件转发 + 实例暴露） |
 | [editor.md-next-react](https://www.npmjs.com/package/editor.md-next-react) | [![npm](https://img.shields.io/npm/v/editor.md-next-react)](https://www.npmjs.com/package/editor.md-next-react) | React 组件适配（受控/非受控 + ref 句柄） |
+| [editor.md-next-collab](https://www.npmjs.com/package/editor.md-next-collab) | 🚧 0.2.0 开发中 | 协同编辑拓展包（yjs CRDT：多人光标/离线合并/自建 relay） |
 
 ## 仓库结构
 
@@ -89,6 +90,7 @@ packages/
   core/    editor.md-next          发布包（npm + CDN 产物）→ packages/core/README.md
   vue/     editor.md-next-vue      Vue 3 组件适配          → packages/vue/README.md
   react/   editor.md-next-react    React 组件适配          → packages/react/README.md
+  collab/  editor.md-next-collab   协同编辑拓展包（0.2.0） → docs/collab.md
   demo/    @editormd-next/demo     示例站（GitHub Pages）
 docs/                             用户文档（安装/配置/API/适配包/扩展语法/迁移…）
 ai-docs/                          开发文档（需求、架构决策、功能对照矩阵）

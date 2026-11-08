@@ -1,12 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.2.0（进行中）
 
-### Added
+> 目标：协同编辑拓展包 `editor.md-next-collab` 首发 + core npm 产物外置化 `@codemirror/*`（ADR-007/008，见 `ai-docs/collab-design.md`）。随 P12 推进补充条目，发布时定稿。
+
+### Added（已落地）
 
 - **离线/内网支持**：CDN 地址粒度化（`markmapBase` → `d3Js` / `markmapLibJs` / `markmapViewJs`），全部地址支持相对路径（可指向宿主 public 目录自托管）；emoji 新增 `markdown.emojiMode: 'unicode'` 渲染模式（GitHub/Twemoji 渲染为 Unicode 字符，完全离线可用）。见 `docs/offline.md`。
 
-### Breaking
+### Breaking（已落地）
 
 - `cdn.markmapBase` 拆分为 `d3Js` / `markmapLibJs` / `markmapViewJs`（0.1.1 引入的字段，0.1.x 内调整）。
 

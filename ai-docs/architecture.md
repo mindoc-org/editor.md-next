@@ -50,3 +50,17 @@
 - **选区高亮不可见（本文 ①② 只是前两层）**：① 主题把白色背景设在 `.cm-editor` 根上，而 drawSelection 的选区层是 z-index:-2 的后代——负 z-index 后代被画在根背景**之下**，高亮被完全盖住（选区功能正常、Ctrl+X 可剪切，仅视觉消失）。修复：主题根元素加 position:relative + zIndex:0 使其形成层叠上下文，选区层画在背景之上。② 修完仍不显眼：CM 默认主题的聚焦选区规则 `&light.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground`（#d7d4f0，特异度 0,4,1）压过我们普通规则（0,2,0）——需用同位高特异度选择器申明品牌色。教训：给 .cm-editor 设不透明背景的主题必须让它形成层叠上下文；自定义选区色必须对齐 CM 默认的选择器特异度。
 - **mindmap 重渲染**：markmap-autoloader 0.18 无 MutationObserver（只在脚本加载时处理一次静态节点），编辑后新节点永远不会被转换 → 改为直接加载 d3/markmap-lib/markmap-view 三件套（CDN 地址由 `cdn.markmapBase` 推导），每次渲染用 Transformer.transform + Markmap.create 全新构建。
 - **对话框拖拽**：改用 Pointer Events + setPointerCapture（旧实现往 body 加 user-select:none，鼠标在窗口外释放时类残留 → 全页无法选中文本）。
+
+## ADR-007 core npm 产物外置化 @codemirror/*（2026-11-09，0.2.0）
+
+- **决策**：es/umd 产物 external `@codemirror/*` + `@lezer/*` 并从 `dependencies` 移到 `peerDependencies`（devDependencies 保留供构建/测试）；IIFE/CDN 产物**继续全打包自包含**（`<script>` 用法不变）；markdown-it / hljs / DOMPurify 维持内联（markdown-it 插件是纯函数，跨实例安全，无需共享模块身份）。
+- **根因**：CM6 的 `resolveExtensions` 用 `instanceof` 识别扩展，**全页只允许一份 `@codemirror/state`**，跨副本注入直接抛 `Unrecognized extension value ... two copies of @codemirror/state`。现状全打包导致：`editor.extensions` 对 npm 产物用户实际不可用（`docs/plugins.md` 旧注记只在源码构建场景成立）；任何外部 CM6 扩展包（协同拓展包等）无法注入。
+- **修订对象**：ADR-001 的"无 external 的全打包"。CM6 ^6 生态版本冻结、peer 地狱风险可控（npm ≥7 自动安装 peer）。
+- **附带收益**：core npm 产物显著减重（CM6/lezer 系占主 chunk 相当比例）；`editor.extensions` 修成真正可用的扩展生态入口。
+- **验证点**：`@codemirror/language-data` 外置后的 UMD 动态 require、demo（workspace 源码引用）与 npm 产物两种路径的注入冒烟。
+
+## ADR-008 协同编辑拓展包 editor.md-next-collab（2026-11-09，0.2.0）
+
+- **决策**：协同能力以独立发布包 `editor.md-next-collab` 承载（与 vue/react 平级）。引擎选 **yjs 13 稳定线**（`yjs ^13.5.6` peer + `y-codemirror.next ^0.3.6` + `y-protocols`），不追 Yjs v14（`@y/codemirror` 为 unstable 开发分支）。版本 0.2.0 与三包对齐。
+- **要点**：`CollabTransport` 通道抽象（服务端纯广播 relay ~40 行即可，内网友好）+ 内置 `websocketTransport` / `broadcastChannelTransport`；undo 用 `Y.UndoManager` + `Prec.highest` 键位压制 core 内置 historyKeymap（**core 零功能改动**——ySync 远程事务不带 addToHistory 标记，内置 history 语义错误）；远程光标/选区内置（awareness，遵守半透明铁律）；仅支持 npm/bundler 场景（CDN 双实例约束，见 ADR-007）。
+- **调研与设计全文**：`ai-docs/collab-design.md`。被拒绝的备选（OT 路线、core 内置、core re-export 方案）见该文 §1.2。

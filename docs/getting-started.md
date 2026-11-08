@@ -18,7 +18,7 @@ const editor = new EditorMD('#editor', {
 })
 ```
 
-包产物自包含（CodeMirror 6 / markdown-it / highlight.js / DOMPurify 已打包），KaTeX、mermaid、markmap 等重依赖按需从 CDN 懒加载（可配置，见 [configuration.md](configuration.md#cnd)）。
+包产物：0.2.0 起 `@codemirror/*` / `@lezer/*` 为 peer 依赖（安装时自动带上），markdown-it / highlight.js / DOMPurify 仍打包在内；KaTeX、mermaid、markmap 等重依赖按需从 CDN 懒加载（可配置，见 [configuration.md](configuration.md#cnd)）。peer 共享让宿主注入的 CM6 扩展与核心包使用同一份实例（见 [plugins.md](plugins.md#注入-codemirror-扩展)）。
 
 ## 安装（CDN）
 

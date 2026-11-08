@@ -1,6 +1,6 @@
 # TODO
 
-> 阶段任务清单（P0~P11）。功能明细见 `ai-docs/feature-parity.md`，实现一项勾一项。
+> 阶段任务清单（P0~P12）。功能明细见 `ai-docs/feature-parity.md`，实现一项勾一项。
 
 ## P0 工作区改造 ✅
 
@@ -127,3 +127,20 @@
 - [ ] npm 发布（core 0.1.0 已发；vue/react 0.1.1 修复版待确认）
 - [x] gh-pages 部署
 - [x] 2026-11-08 bugfix：选区高亮三层根因 + mermaid/emoji/markmap/拖拽修复（见 ai-docs/bugfix-cm6-selection-invisible.md 与 CHANGELOG Unreleased）
+
+## P12 协同编辑与 core 外置化（0.2.0，2026-11-09 立项）
+
+> 设计定稿见 `ai-docs/collab-design.md`，决策见 `ai-docs/architecture.md` ADR-007/008，用户文档 `docs/collab.md`。
+
+- [x] 文档先行：ADR-007/008 + collab-design.md + docs/collab.md + 版本对齐 0.2.0
+- [ ] core：es/umd 外置 `@codemirror/*` + `@lezer/*` 并转 peerDependencies，IIFE/CDN 保持全打包（ADR-007）
+- [ ] core：`VERSION` 与 package.json 对齐修正（原硬编码 0.1.0，未随 0.1.1 bump）
+- [ ] 新包 packages/collab：editor.md-next-collab 骨架（peer 全外置 + vite lib es/cjs + d.ts）
+- [ ] collab：CollabTransport 抽象 + y-protocols sync/awareness 消息泵 + createCollab 编排
+- [ ] collab：websocketTransport（简易 relay 协议）+ broadcastChannelTransport + 参考服务端 server/relay.mjs
+- [ ] collab：Y.UndoManager + Prec.highest 键位（压制内置 historyKeymap）
+- [ ] collab：远程光标/选区主题（半透明合规）+ randomUser
+- [ ] collab：测试——内存 transport 双 EditorMD 实例收敛/undo/destroy + check:selection
+- [ ] vue：defineExpose({ editor })；react 补 defaultValue prop（非受控）
+- [ ] demo：协同示例（BroadcastChannel 双标签页，静态站可演示）+ vue/react 文档协同用法与受控同步限制
+- [ ] 发版：core/vue/react 0.2.0 + collab 0.2.0 首发（publish:all 扩为四包，CHANGELOG/tag/Release）
