@@ -10,12 +10,7 @@
     "declaration": true,
     "declarationMap": true,
     "rootDir": "src",
-    "outDir": "dist/types",
-    "paths": {
-      "editor.md-next": [
-        "../core/src/index.ts"
-      ]
-    }
+    "outDir": "dist/types"
   },
   "include": [
     "src"

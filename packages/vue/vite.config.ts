@@ -11,6 +11,7 @@ export default defineConfig({
       fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     rollupOptions: {
+      output: { exports: 'named' },
       external: [/^editor\.md-next/, /^vue($|\/)/],
     },
     sourcemap: true,
