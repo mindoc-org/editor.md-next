@@ -241,7 +241,3 @@
   color: var(--emd-muted);
 }
 
-/* 拖拽时禁止选中文本 */
-body.emd-user-unselect {
-  user-select: none;
-}

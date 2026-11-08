@@ -131,7 +131,8 @@ export interface CdnConfig {
   katexCss: string
   katexJs: string
   mermaidJs: string
-  markmapJs: string
+  /** markmap 相关库（d3 / markmap-lib / markmap-view）的 npm CDN 基地址 */
+  markmapBase: string
 }
 
 export type I18nOption = I18nCode | LangDict

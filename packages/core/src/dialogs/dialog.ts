@@ -2,7 +2,7 @@
  * 通用对话框框架：遮罩、拖拽、层级递增、lockScreen、按钮区。
  * 对齐原版 createDialog 的行为子集，结构改用现代 class。
  */
-import { addClass, on, removeClass, setStyles } from '@editormd-next/utils'
+import { addClass, on, setStyles } from '@editormd-next/utils'
 import type { EditorMD } from '../editor'
 
 export interface DialogButton {
@@ -150,7 +150,9 @@ export class Dialog {
     let baseTop = 0
     let dragging = false
 
-    const move = (event: MouseEvent): void => {
+    // Pointer Events + setPointerCapture：指针释放（即使在窗口外）也必然收到
+    // pointerup/pointercancel，不会残留全局 user-select: none
+    const move = (event: PointerEvent): void => {
       if (!dragging) return
       const containerRect = this.editor.dom.container.getBoundingClientRect()
       const left = Math.min(Math.max(baseLeft + event.clientX - startX, 0), containerRect.width - 60)
@@ -159,24 +161,25 @@ export class Dialog {
     }
     const up = (): void => {
       dragging = false
-      removeClass(document.body, 'emd-user-unselect')
     }
 
     this.unbinds.push(
-      on(handle, 'mousedown', (event) => {
+      on(handle, 'pointerdown', (event) => {
         if ((event.target as HTMLElement).closest('button')) return
-        dragging = true
+        if (!handle.setPointerCapture) return
         const rect = this.el.getBoundingClientRect()
         const containerRect = this.editor.dom.container.getBoundingClientRect()
         startX = event.clientX
         startY = event.clientY
         baseLeft = rect.left - containerRect.left
         baseTop = rect.top - containerRect.top
-        addClass(document.body, 'emd-user-unselect')
+        dragging = true
+        handle.setPointerCapture(event.pointerId)
         event.preventDefault()
       }),
-      on(document, 'mousemove', move),
-      on(document, 'mouseup', up),
+      on(handle, 'pointermove', move),
+      on(handle, 'pointerup', up),
+      on(handle, 'pointercancel', up),
     )
   }
 }

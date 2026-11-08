@@ -46,3 +46,5 @@
 - **时间豁免**：hh:mm:ss 先遮蔽-扫描-还原（原实现只测 name，导致 `12:30:45` 中 `:30:` 被转成图片）。
 - **logo 字形**：移植原版 `editormd.logo.css` 字形/尺寸类（此前 fonts.css 只声明了字体，没有字形映射）。
 - 诊断基建：mermaid 预解析失败会打 console 并写入 localStorage（`emd-mermaid-failure`），含确切源文本。
+- **mindmap 重渲染**：markmap-autoloader 0.18 无 MutationObserver（只在脚本加载时处理一次静态节点），编辑后新节点永远不会被转换 → 改为直接加载 d3/markmap-lib/markmap-view 三件套（CDN 地址由 `cdn.markmapBase` 推导），每次渲染用 Transformer.transform + Markmap.create 全新构建。
+- **对话框拖拽**：改用 Pointer Events + setPointerCapture（旧实现往 body 加 user-select:none，鼠标在窗口外释放时类残留 → 全页无法选中文本）。

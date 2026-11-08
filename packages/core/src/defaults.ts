@@ -83,7 +83,7 @@ export const defaults: EditorOptions = {
     katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
     katexJs: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js',
     mermaidJs: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js',
-    markmapJs: 'https://cdn.jsdelivr.net/npm/markmap-autoloader@0.18/dist/index.js',
+    markmapBase: 'https://cdn.jsdelivr.net/npm',
   },
   on: {},
 }
