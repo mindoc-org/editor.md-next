@@ -6,7 +6,7 @@
   "description": "editor.md-next — a Markdown editor rewritten in TypeScript (CodeMirror 6), inspired by editor.md",
   "packageManager": "pnpm@11.22.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22.13"
   },
   "scripts": {
     "dev": "pnpm -C packages/demo dev",
