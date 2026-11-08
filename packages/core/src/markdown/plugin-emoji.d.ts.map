@@ -1,0 +1,1 @@
+{"version":3,"file":"plugin-emoji.d.ts","sourceRoot":"","sources":["plugin-emoji.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,OAAO,KAAK,EAAE,UAAU,EAAoB,MAAM,aAAa,CAAA;AAE/D,MAAM,WAAW,kBAAkB;IACjC,UAAU,EAAE,MAAM,CAAA;IAClB,WAAW,EAAE,MAAM,CAAA;CACpB;AAsBD,wBAAgB,WAAW,CAAC,EAAE,EAAE,UAAU,EAAE,OAAO,EAAE,kBAAkB,GAAG,IAAI,CA6C7E"}
