@@ -1,8 +1,12 @@
 # editor.md-next
 
-> [Editor.md](https://github.com/pandao/editor.md) 的 TypeScript 重写版 —— 基于 CodeMirror 6 与 markdown-it 的现代 Markdown 编辑器。**当前版本 0.1.0（功能完整，待发布）**
+> [Editor.md](https://github.com/pandao/editor.md) 的 TypeScript 重写版 —— 基于 CodeMirror 6 与 markdown-it 的现代 Markdown 编辑器。
 
+[![npm version](https://img.shields.io/npm/v/editor.md-next?label=editor.md-next)](https://www.npmjs.com/package/editor.md-next)
+[![npm version](https://img.shields.io/npm/v/editor.md-next-vue?label=editor.md-next-vue)](https://www.npmjs.com/package/editor.md-next-vue)
+[![npm version](https://img.shields.io/npm/v/editor.md-next-react?label=editor.md-next-react)](https://www.npmjs.com/package/editor.md-next-react)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/示例站-GitHub%20Pages-blue?logo=github)](https://mindoc-org.github.io/editor.md-next/)
 
 原版 editor.md 是 jQuery + CodeMirror 5 时代的经典 Markdown 编辑器，但核心源码集中在 5000+ 行的单文件中且缺乏维护。editor.md-next 在保留其功能集的前提下全面重构：
 
@@ -69,14 +73,22 @@ pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 
 > 每次修改后的标准流程（验证/提交/Pages/npm）见 [`WORKFLOW.md`](WORKFLOW.md)；npm 登录与发布细节见 [`RELEASING.md`](RELEASING.md)。
 
+## 发布包
+
+| 包 | 版本 | 说明 |
+| --- | --- | --- |
+| [editor.md-next](https://www.npmjs.com/package/editor.md-next) | [![npm](https://img.shields.io/npm/v/editor.md-next)](https://www.npmjs.com/package/editor.md-next) | 核心编辑器：ESM + UMD + CDN IIFE + `*.d.ts` + CSS |
+| [editor.md-next-vue](https://www.npmjs.com/package/editor.md-next-vue) | [![npm](https://img.shields.io/npm/v/editor.md-next-vue)](https://www.npmjs.com/package/editor.md-next-vue) | Vue 3 组件适配（v-model + 事件转发 + 实例暴露） |
+| [editor.md-next-react](https://www.npmjs.com/package/editor.md-next-react) | [![npm](https://img.shields.io/npm/v/editor.md-next-react)](https://www.npmjs.com/package/editor.md-next-react) | React 组件适配（受控/非受控 + ref 句柄） |
+
 ## 仓库结构
 
 ```
 packages/
   utils/   @editormd-next/utils    私有内部包（构建时打进 core）
-  core/    editor.md-next          发布包（npm + CDN 产物）
-  vue/     editor.md-next-vue      Vue 3 组件适配
-  react/   editor.md-next-react    React 组件适配
+  core/    editor.md-next          发布包（npm + CDN 产物）→ packages/core/README.md
+  vue/     editor.md-next-vue      Vue 3 组件适配          → packages/vue/README.md
+  react/   editor.md-next-react    React 组件适配          → packages/react/README.md
   demo/    @editormd-next/demo     示例站（GitHub Pages）
 docs/                             用户文档（安装/配置/API/适配包/扩展语法/迁移…）
 ai-docs/                          开发文档（需求、架构决策、功能对照矩阵）
