@@ -20,6 +20,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:lines": "node scripts/check-lines.mjs",
+    "check:selection": "node scripts/check-selection-pixels.mjs",
     "deploy:pages": "pnpm demo:build && gh-pages -d packages/demo/dist",
     "publish:all": "pnpm -r build && pnpm -r publish"
   },

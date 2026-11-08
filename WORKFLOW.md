@@ -17,15 +17,16 @@
 
 ```bash
 pnpm typecheck      # 5 包类型检查
-pnpm test           # vitest（46+ 例）
+pnpm test           # vitest（50+ 例）
 pnpm build          # 全量构建（utils → core → vue/react → demo）
-pnpm check:lines    # 单文件 ≤600 行
+pnpm check:lines    # 单文件 ≤600 行 + 防游离 .d.ts
 ```
 
 四项全绿才算通过。**构建版必须真实走查**——dev 模式（alias 直连源码）与构建产物行为有差异（历史教训：CSS 不注入、DOMPurify 剥属性都只在构建版暴露）：
 
 ```bash
-pnpm demo:build && pnpm demo:preview
+pnpm demo:build && pnpm demo:preview   # 常驻服务，另开终端
+pnpm check:selection                   # 改过选区/行背景时必跑：真实 Chrome 像素采样
 # 浏览器打开 http://localhost:4173/，走查与本次改动相关的示例
 ```
 
@@ -34,7 +35,7 @@ pnpm demo:build && pnpm demo:preview
 - **图表示例（#diagram）**：确认 `.emd-mermaid` 里**不含 "Syntax error" 文本**（mermaid 错误炸弹也是 svg，"有 svg"≠成功）；mindmap 出 svg。
 - **emoji 示例（#emoji）**：图片 `naturalWidth > 0`（alt 文字显示=加载失败）；`12:30:45` 原样保留；logo 字形可见。
 - **公式示例（#tex）**：`.katex` 元素存在。
-- **编辑器选区**：改过选区/行背景后，用**像素采样判定**（蓝色占比）而非 DOM 元素存在性——选区层元素存在但可能被不透明背景盖住（假阳性教训见 `ai-docs/bugfix-cm6-selection-invisible.md` §4）。
+- **编辑器选区**：改过选区/行背景后必跑 `pnpm check:selection`（需先 `pnpm demo:preview`）。脚本用真实 Chrome 派发双击 / 水平拖动 / 跨行键盘选区，截图后统计选区矩形内蓝色背景像素占比（默认 > 0.5 才算 PASS），三场景全绿才算通过。**不可用 DOM 元素存在性判定**——选区层元素存在但可能被不透明背景盖住（假阳性教训见 `ai-docs/bugfix-cm6-selection-invisible.md` §4）。可选参数：`--url`（默认 `http://127.0.0.1:4173/#basics`）、`--threshold`、`--save-shots <dir>`；`CHROME_PATH` 指定浏览器；脚本自启自停独立 Chrome 实例（Node ≥22 内置 CDP 客户端，无额外依赖）。
 - 上传示例用 mock，不需真实服务端。
 
 ## 2. 提交

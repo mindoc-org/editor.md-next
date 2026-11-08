@@ -11,7 +11,8 @@
 | `pnpm build:lib` / `pnpm build:cdn` | 仅构建 core 的 npm 产物 / CDN 产物 |
 | `pnpm test` / `pnpm test:watch` | vitest 单测 |
 | `pnpm typecheck` | 全 workspace `tsc --noEmit` |
-| `pnpm check:lines` | 检查源码文件 ≤ 600 行（超限即 CI 失败） |
+| `pnpm check:lines` | 检查源码文件 ≤ 600 行（超限即 CI 失败）+ 防游离 `.d.ts` |
+| `pnpm check:selection` | 真实 Chrome 像素采样验证选区高亮（需先 `pnpm demo:preview`；改过选区/行背景必跑） |
 | `pnpm publish:all` | 构建并发布三个包到 npm（流程见 `RELEASING.md`） |
 
 > **每次修改后的完整流程**（本地验证 → 提交 → push → Pages/npm 更新）见根目录 [`WORKFLOW.md`](WORKFLOW.md)，必须遵循。
