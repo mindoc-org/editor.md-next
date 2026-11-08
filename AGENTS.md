@@ -14,6 +14,8 @@
 | `pnpm check:lines` | 检查源码文件 ≤ 600 行（超限即 CI 失败） |
 | `pnpm publish:all` | 构建并发布三个包到 npm（流程见 `RELEASING.md`） |
 
+> **每次修改后的完整流程**（本地验证 → 提交 → push → Pages/npm 更新）见根目录 [`WORKFLOW.md`](WORKFLOW.md)，必须遵循。
+
 ## 目录与职责
 
 ```

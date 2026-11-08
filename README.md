@@ -67,7 +67,7 @@ pnpm publish:all  # 构建并发布 core/vue/react 到 npm（见 RELEASING.md）
 pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 ```
 
-> npm 登录与发布流程详见 [`RELEASING.md`](RELEASING.md)。
+> 每次修改后的标准流程（验证/提交/Pages/npm）见 [`WORKFLOW.md`](WORKFLOW.md)；npm 登录与发布细节见 [`RELEASING.md`](RELEASING.md)。
 
 ## 仓库结构
 
