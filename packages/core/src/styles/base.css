@@ -55,6 +55,14 @@
   outline: none;
 }
 
+/* 防御：浏览器扩展（划词翻译等）或宿主页面可能把全局 user-select 设为 none，
+   会破坏 CM6 的鼠标水平选区与原生选区——编辑区内容强制可选中 */
+.editormd-next .cm-content,
+.editormd-next .cm-line {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 .editormd-next-preview-host {
   min-width: 0;
   border-left: 1px solid var(--emd-border);
