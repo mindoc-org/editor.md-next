@@ -120,18 +120,13 @@ let markmapLoading: Promise<boolean> | null = null
 
 async function ensureMarkmap(cdn: CdnConfig): Promise<boolean> {
   if (window.markmap?.Markmap && window.markmap?.Transformer) return true
-  if (!cdn.markmapBase) return false
+  const scripts = [cdn.d3Js, cdn.markmapLibJs, cdn.markmapViewJs]
+  if (scripts.some((s) => !s)) return false // 任一地址未配置即禁用
   if (!markmapLoading) {
-    const base = cdn.markmapBase.replace(/\/$/, '')
-    const scripts = [
-      `${base}/d3@7.9.0/dist/d3.min.js`,
-      `${base}/markmap-lib@0.18.13/dist/browser/index.iife.js`,
-      `${base}/markmap-view@0.18.10/dist/browser/index.js`,
-    ]
     markmapLoading = (async () => {
       for (const src of scripts) {
         try {
-          await loadScript(src)
+          await loadScript(src) // 支持相对路径（相对页面基准解析）
         } catch (error) {
           console.error('[editormd-next] markmap script load failed:', src, error)
           return false

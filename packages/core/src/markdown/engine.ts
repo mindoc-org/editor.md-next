@@ -41,7 +41,11 @@ export class MarkdownEngine {
     tocPlugin(this.md)
     if (config.taskList) taskListPlugin(this.md)
     if (config.emoji) {
-      emojiPlugin(this.md, { githubPath: config.emojiGithubPath, twemojiPath: config.emojiTwemojiPath })
+      emojiPlugin(this.md, {
+        githubPath: config.emojiGithubPath,
+        twemojiPath: config.emojiTwemojiPath,
+        emojiMode: config.emojiMode,
+      })
     }
     if (config.tex) texPlugin(this.md)
     if (config.mermaid || config.mindmap || config.tex) fencePlugin(this.md)

@@ -62,8 +62,9 @@
 | `toc` | `true`（简写） | 对象形式：`{ enable, title, startLevel: 1, dropdown: false, container }`；`container` 为外部 selector |
 | `taskList` | `true` | `- [ ]` / `- [x]` |
 | `emoji` | `true` | 四类 emoji 语法 |
-| `emojiGithubPath` | webpagefx CDN | `:name:` 图片目录（路径 + name + `.png`） |
-| `emojiTwemojiPath` | jsDelivr twemoji | `:tw-编码:` 图片目录 |
+| `emojiMode` | `'image'` | `'image'`（图片渲染）/ `'unicode'`（Unicode 字符渲染，完全离线可用；GitHub 专属 emoji 无字符时退回图片） |
+| `emojiGithubPath` | githubassets 官方源 | `:name:` 图片目录（路径 + name + `.png`），支持相对路径 |
+| `emojiTwemojiPath` | jsDelivr twemoji | `:tw-编码:` 图片目录，支持相对路径 |
 | `tex` | `false` | KaTeX 公式（CDN 懒加载） |
 | `mermaid` | `true` | ```mermaid 代码块 |
 | `mindmap` | `true` | ```mindmap 代码块（markmap） |
@@ -99,9 +100,9 @@
 | --- | --- |
 | `katexCss` / `katexJs` | KaTeX 资源；置空串禁用 |
 | `mermaidJs` | mermaid UMD；置空串禁用 |
-| `markmapBase` | markmap 三件套（d3 / markmap-lib / markmap-view）的 npm CDN 基地址；置空串禁用 |
+| `d3Js` / `markmapLibJs` / `markmapViewJs` | markmap 三件套，按序加载；任一置空禁用 |
 
-页面已存在 `window.katex` / `window.mermaid` 时优先使用，不重复加载。
+所有地址支持**绝对 URL 与相对路径**（相对页面基准解析），可指向宿主应用 `public/` 目录的自托管副本——离线/内网部署详见 [offline.md](offline.md)。页面已存在 `window.katex` / `window.mermaid` 时优先使用，不重复加载。
 
 ## 事件回调糖衣
 

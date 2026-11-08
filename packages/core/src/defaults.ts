@@ -55,6 +55,7 @@ export const defaults: EditorOptions = {
     emoji: true,
     emojiGithubPath: 'https://github.githubassets.com/images/icons/emoji/',
     emojiTwemojiPath: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/',
+    emojiMode: 'image',
     tex: false,
     mermaid: true,
     mindmap: true,
@@ -83,7 +84,9 @@ export const defaults: EditorOptions = {
     katexCss: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
     katexJs: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js',
     mermaidJs: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js',
-    markmapBase: 'https://cdn.jsdelivr.net/npm',
+    d3Js: 'https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js',
+    markmapLibJs: 'https://cdn.jsdelivr.net/npm/markmap-lib@0.18.13/dist/browser/index.iife.js',
+    markmapViewJs: 'https://cdn.jsdelivr.net/npm/markmap-view@0.18.10/dist/browser/index.js',
   },
   on: {},
 }

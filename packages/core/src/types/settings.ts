@@ -80,9 +80,15 @@ export interface MarkdownConfig {
   toc: TocOptions
   taskList: boolean
   emoji: boolean
-  /** `:name:` github 风格 emoji 图片目录（路径 + name + .png） */
+  /**
+   * emoji 渲染模式：
+   * - 'image'：GitHub/Twemoji 图片（默认，与原版视觉一致，需要图片可达）
+   * - 'unicode'：直接渲染 Unicode 字符（完全离线可用，fa/logo 两类仍为字体图标）
+   */
+  emojiMode: 'image' | 'unicode'
+  /** `:name:` github 风格 emoji 图片目录（路径 + name + .png）；支持相对路径 */
   emojiGithubPath: string
-  /** `:tw-code:` twemoji 图片目录（路径 + code + .png） */
+  /** `:tw-code:` twemoji 图片目录（路径 + code + .png）；支持相对路径 */
   emojiTwemojiPath: string
   /** KaTeX 数学公式（CDN 懒加载） */
   tex: boolean
@@ -126,13 +132,15 @@ export interface DialogConfig {
   maskOpacity: number
 }
 
-/** 重依赖 CDN 地址（懒加载脚本/样式）；置空串禁用对应特性加载 */
+/** 重依赖懒加载地址；支持绝对 URL 与相对路径（相对页面基准解析，可指向宿主 public 目录），置空串禁用对应特性 */
 export interface CdnConfig {
   katexCss: string
   katexJs: string
   mermaidJs: string
-  /** markmap 相关库（d3 / markmap-lib / markmap-view）的 npm CDN 基地址 */
-  markmapBase: string
+  /** markmap 依赖三件套，按序加载 */
+  d3Js: string
+  markmapLibJs: string
+  markmapViewJs: string
 }
 
 export type I18nOption = I18nCode | LangDict

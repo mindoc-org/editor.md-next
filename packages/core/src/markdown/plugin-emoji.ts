@@ -2,6 +2,10 @@
  * Emoji 插件：`:name:`（github 图片）、`:tw-code:`（twemoji）、
  * `:fa-name:`（FontAwesome 图标）、`:editormd-logo(-Nx)?:`（logo 字体）。
  * 时间格式 hh:mm:ss 豁免（与原版一致）。
+ *
+ * emojiMode：
+ * - 'image'（默认）：github/twemoji 渲染为图片，与原版视觉一致；
+ * - 'unicode'：github/twemoji 渲染为 Unicode 字符——完全离线可用（fa/logo 本就是字体图标）。
  */
 import { EMOJI_UNICODE } from './data/emoji-unicode'
 import type { MarkdownIt, StateCore, Token } from 'markdown-it'
@@ -9,6 +13,16 @@ import type { MarkdownIt, StateCore, Token } from 'markdown-it'
 export interface EmojiPluginOptions {
   githubPath: string
   twemojiPath: string
+  emojiMode: 'image' | 'unicode'
+}
+
+/** '1f604' / '1f1e6-1f1f8' 码点串 → 字符 */
+export function codepointToChar(cp: string): string {
+  try {
+    return String.fromCodePoint(...cp.split('-').map((h) => Number.parseInt(h, 16)))
+  } catch {
+    return ''
+  }
 }
 
 /** 与原版一致的特殊名映射 */
@@ -79,11 +93,26 @@ export function emojiPlugin(md: MarkdownIt, options: EmojiPluginOptions): void {
 
   md.renderer.rules['emd_emoji'] = (tokens, idx) => {
     const { kind, name, raw } = tokens[idx]!.meta as { kind: EmojiKind; name: string; raw: string }
+    const unicode = options.emojiMode === 'unicode'
+    const charSpan = (char: string): string | null =>
+      char ? `<span class="emd-emoji-unicode">${char}</span>` : null
+
     switch (kind) {
-      case 'github':
+      case 'github': {
+        if (unicode) {
+          const char = charSpan(codepointToChar(EMOJI_UNICODE[raw] ?? EMOJI_UNICODE[name] ?? ''))
+          if (char) return char
+          // 无 unicode 码点（GitHub 专属 emoji，如 bowtie）退回图片路径
+        }
         return `<img class="emd-emoji" src="${githubEmojiSrc(options.githubPath, name, raw)}" alt=":${raw}:" title=":${raw}:" height="20" width="20" align="absmiddle">`
-      case 'twemoji':
+      }
+      case 'twemoji': {
+        if (unicode) {
+          const char = charSpan(codepointToChar(name))
+          if (char) return char
+        }
         return `<img class="emd-emoji" src="${options.twemojiPath}${name}.png" alt=":${raw}:" title=":${raw}:" height="20" width="20" align="absmiddle">`
+      }
       case 'fa':
         return `<i class="fa fa-${name}" title=":${raw}:"></i>`
       case 'logo':

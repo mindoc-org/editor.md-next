@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **离线/内网支持**：CDN 地址粒度化（`markmapBase` → `d3Js` / `markmapLibJs` / `markmapViewJs`），全部地址支持相对路径（可指向宿主 public 目录自托管）；emoji 新增 `markdown.emojiMode: 'unicode'` 渲染模式（GitHub/Twemoji 渲染为 Unicode 字符，完全离线可用）。见 `docs/offline.md`。
+
+### Breaking
+
+- `cdn.markmapBase` 拆分为 `d3Js` / `markmapLibJs` / `markmapViewJs`（0.1.1 引入的字段，0.1.x 内调整）。
+
 ## 0.1.1 (2026-11-08)
 
 > 本次发布：`editor.md-next@0.1.1`（核心修复）、`editor.md-next-vue@0.1.2`、`editor.md-next-react@0.1.2`（适配包随依赖版本 patch，`workspace:^` 发布时替换为 `^0.1.1`）。

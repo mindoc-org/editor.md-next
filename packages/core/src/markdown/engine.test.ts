@@ -57,6 +57,21 @@ describe('MarkdownEngine', () => {
     expect(html).toContain('fa-star')
   })
 
+  it('emoji unicode 模式：github/twemoji 渲染为字符，fa 保持字体图标', () => {
+    const { html } = createEngine({ emojiMode: 'unicode' }).render(':smile: :tw-1f600: :fa-star: 12:30:45')
+    expect(html).toContain('😄') // smile → U+1F604
+    expect(html).toContain('😀') // tw-1f600 → U+1F600
+    expect(html).not.toContain('<img class="emd-emoji"')
+    expect(html).toContain('fa-star')
+    expect(html).toContain('12:30:45') // 时间豁免仍生效
+  })
+
+  it('emoji unicode 模式：无码点的 GitHub 专属 emoji 退回图片路径', () => {
+    const { html } = createEngine({ emojiMode: 'unicode' }).render(':bowtie:')
+    expect(html).toContain('<img class="emd-emoji"')
+    expect(html).toContain('bowtie.png')
+  })
+
   it('tex 钩子（data-tex base64 占位，含 --> 也不丢）', () => {
     const { html } = createEngine({ tex: true }).render('行内 $$E=mc^2 \\to A --> B$$ 公式')
     expect(html).toContain('emd-tex')

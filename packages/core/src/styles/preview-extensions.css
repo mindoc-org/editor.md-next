@@ -36,6 +36,15 @@
   margin: 0 2px;
 }
 
+/* unicode 模式的 emoji 字符（与图片尺寸对齐） */
+.emd-preview .emd-emoji-unicode {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 1.25em;
+  line-height: 1;
+  margin: 0 2px;
+}
+
 .emd-preview i.fa,
 .emd-preview i.editormd-logo {
   display: inline-block;
