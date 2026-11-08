@@ -1,4 +1,13 @@
-/** CM6 编辑区主题：内置 default / dark，支持注入自定义主题扩展。 */
+/**
+ * CM6 编辑区主题：内置 default / dark，支持注入自定义主题扩展。
+ *
+ * 层叠约束（勿改回不透明色）：drawSelection() 的 .cm-selectionLayer 为
+ * z-index:-2，绘制在 .cm-content 的块级行背景之下；同时 drawSelection 会把
+ * 原生 ::selection 强制设为 transparent。因此编辑区内任何不透明行背景
+ * （尤其 .cm-activeLine）都会把选区高亮完全盖住——选区逻辑正常但视觉不可见。
+ * CM6 官方默认同样使用半透明活动行背景（light: #cceeff44 / dark: #99eeff33）。
+ * 自定义主题注入时也必须保证行背景半透明。
+ */
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import type { Extension } from '@codemirror/state'
 import { EditorView } from '@codemirror/view'
@@ -17,7 +26,8 @@ const lightTheme = EditorView.theme({
   },
   '.cm-selectionBackground': { backgroundColor: '#b4d5fe' },
   '.cm-content ::selection': { backgroundColor: '#b4d5fe' },
-  '.cm-activeLine': { backgroundColor: '#f6f8fa' },
+  // 白底上视觉等价于 #f6f8fa，但半透明可让下层选区蓝 #b4d5fe 透出
+  '.cm-activeLine': { backgroundColor: 'rgba(9, 105, 218, 0.04)' },
   '.cm-gutters': { backgroundColor: '#ffffff', color: '#8c959f', border: 'none' },
   '.cm-activeLineGutter': { backgroundColor: '#f6f8fa', color: '#24292f' },
   '.cm-selectionMatch': { backgroundColor: '#fae17d80' },
@@ -34,7 +44,8 @@ const darkTheme = EditorView.theme(
     },
     '.cm-selectionBackground': { backgroundColor: '#314262' },
     '.cm-content ::selection': { backgroundColor: '#314262' },
-    '.cm-activeLine': { backgroundColor: '#2a2e37' },
+    // 深色底上视觉等价于 #2a2e37，同样保持半透明以免遮挡选区
+    '.cm-activeLine': { backgroundColor: 'rgba(255, 255, 255, 0.055)' },
     '.cm-gutters': { backgroundColor: '#1e2127', color: '#6e7681', border: 'none' },
     '.cm-activeLineGutter': { backgroundColor: '#2a2e37', color: '#c9d1d9' },
     '.cm-selectionMatch': { backgroundColor: '#63533480' },
