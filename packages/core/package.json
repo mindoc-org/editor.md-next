@@ -45,7 +45,8 @@
     "build": "vite build && vite build --mode cdn && tsc -p tsconfig.build.json",
     "build:lib": "vite build && tsc -p tsconfig.build.json",
     "build:cdn": "vite build --mode cdn",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm -w build"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.4",

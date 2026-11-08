@@ -1,6 +1,6 @@
 {
   "name": "editor.md-next-vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Vue 3 component wrapper for editor.md-next",
   "keywords": [
@@ -37,7 +37,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm -w build"
   },
   "dependencies": {
     "editor.md-next": "workspace:^"

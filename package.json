@@ -20,7 +20,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:lines": "node scripts/check-lines.mjs",
-    "deploy:pages": "pnpm demo:build && gh-pages -d packages/demo/dist"
+    "deploy:pages": "pnpm demo:build && gh-pages -d packages/demo/dist",
+    "publish:all": "pnpm -r build && pnpm -r publish"
   },
   "devDependencies": {
     "gh-pages": "^6.3.0",
