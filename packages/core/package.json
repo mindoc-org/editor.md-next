@@ -1,6 +1,6 @@
 {
   "name": "editor.md-next",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Markdown editor in TypeScript with CodeMirror 6, successor of editor.md",
   "keywords": [

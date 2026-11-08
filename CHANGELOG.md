@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 (2026-11-08)
+
+> 本次发布：`editor.md-next@0.1.1`（核心修复）、`editor.md-next-vue@0.1.2`、`editor.md-next-react@0.1.2`（适配包随依赖版本 patch，`workspace:^` 发布时替换为 `^0.1.1`）。
 
 ### Fixed
 
