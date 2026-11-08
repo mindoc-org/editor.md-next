@@ -63,8 +63,11 @@ pnpm build:cdn    # 仅构建 core 的 CDN 产物（dist/cdn/）
 pnpm test         # vitest 单测
 pnpm typecheck    # 全 workspace 类型检查
 pnpm check:lines  # 源码 ≤600 行检查
+pnpm publish:all  # 构建并发布 core/vue/react 到 npm（见 RELEASING.md）
 pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 ```
+
+> npm 登录与发布流程详见 [`RELEASING.md`](RELEASING.md)。
 
 ## 仓库结构
 

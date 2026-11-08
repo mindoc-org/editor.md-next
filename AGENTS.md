@@ -12,6 +12,7 @@
 | `pnpm test` / `pnpm test:watch` | vitest 单测 |
 | `pnpm typecheck` | 全 workspace `tsc --noEmit` |
 | `pnpm check:lines` | 检查源码文件 ≤ 600 行（超限即 CI 失败） |
+| `pnpm publish:all` | 构建并发布三个包到 npm（流程见 `RELEASING.md`） |
 
 ## 目录与职责
 
