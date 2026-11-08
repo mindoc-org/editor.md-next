@@ -46,6 +46,6 @@
 - **时间豁免**：hh:mm:ss 先遮蔽-扫描-还原（原实现只测 name，导致 `12:30:45` 中 `:30:` 被转成图片）。
 - **logo 字形**：移植原版 `editormd.logo.css` 字形/尺寸类（此前 fonts.css 只声明了字体，没有字形映射）。
 - 诊断基建：mermaid 预解析失败会打 console 并写入 localStorage（`emd-mermaid-failure`），含确切源文本。
-- **选区高亮不可见**：主题把白色背景设在 `.cm-editor` 根上，而 drawSelection 的选区层是 z-index:-2 的后代——负 z-index 后代被画在根背景**之下**，高亮被完全盖住（选区功能正常、Ctrl+X 可剪切，仅视觉消失）。修复：主题根元素加 position:relative + zIndex:0 使其形成层叠上下文，选区层画在背景之上。教训：给 .cm-editor 设不透明背景的主题必须让它形成层叠上下文。
+- **选区高亮不可见（两层原因）**：① 主题把白色背景设在 `.cm-editor` 根上，而 drawSelection 的选区层是 z-index:-2 的后代——负 z-index 后代被画在根背景**之下**，高亮被完全盖住（选区功能正常、Ctrl+X 可剪切，仅视觉消失）。修复：主题根元素加 position:relative + zIndex:0 使其形成层叠上下文，选区层画在背景之上。② 修完仍不显眼：CM 默认主题的聚焦选区规则 `&light.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground`（#d7d4f0，特异度 0,4,1）压过我们普通规则（0,2,0）——需用同位高特异度选择器申明品牌色。教训：给 .cm-editor 设不透明背景的主题必须让它形成层叠上下文；自定义选区色必须对齐 CM 默认的选择器特异度。
 - **mindmap 重渲染**：markmap-autoloader 0.18 无 MutationObserver（只在脚本加载时处理一次静态节点），编辑后新节点永远不会被转换 → 改为直接加载 d3/markmap-lib/markmap-view 三件套（CDN 地址由 `cdn.markmapBase` 推导），每次渲染用 Transformer.transform + Markmap.create 全新构建。
 - **对话框拖拽**：改用 Pointer Events + setPointerCapture（旧实现往 body 加 user-select:none，鼠标在窗口外释放时类残留 → 全页无法选中文本）。

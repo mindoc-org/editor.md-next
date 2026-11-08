@@ -11,9 +11,12 @@ const lightTheme = EditorView.theme({
   '&': { color: '#24292f', backgroundColor: '#ffffff', position: 'relative', zIndex: 0 },
   '.cm-content': { caretColor: '#0969da' },
   '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#0969da' },
-  '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+  // 聚焦态选择器特异度必须 ≥ CM 默认主题的同位规则（否则我们的颜色被 #d7d4f0 压掉）
+  '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
     backgroundColor: '#b4d5fe',
   },
+  '.cm-selectionBackground': { backgroundColor: '#b4d5fe' },
+  '.cm-content ::selection': { backgroundColor: '#b4d5fe' },
   '.cm-activeLine': { backgroundColor: '#f6f8fa' },
   '.cm-gutters': { backgroundColor: '#ffffff', color: '#8c959f', border: 'none' },
   '.cm-activeLineGutter': { backgroundColor: '#f6f8fa', color: '#24292f' },
@@ -26,9 +29,11 @@ const darkTheme = EditorView.theme(
     '&': { color: '#c9d1d9', backgroundColor: '#1e2127', position: 'relative', zIndex: 0 },
     '.cm-content': { caretColor: '#58a6ff' },
     '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#58a6ff' },
-    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+    '&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground': {
       backgroundColor: '#314262',
     },
+    '.cm-selectionBackground': { backgroundColor: '#314262' },
+    '.cm-content ::selection': { backgroundColor: '#314262' },
     '.cm-activeLine': { backgroundColor: '#2a2e37' },
     '.cm-gutters': { backgroundColor: '#1e2127', color: '#6e7681', border: 'none' },
     '.cm-activeLineGutter': { backgroundColor: '#2a2e37', color: '#c9d1d9' },
