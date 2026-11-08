@@ -123,4 +123,7 @@
 - [x] demo 增加 Vue3 / React 示例（v-model/onChange 联动实测通过）
 - [x] docs/vue3.md + docs/react.md
 - [x] 仓库引用统一 mindoc-org/editor.md-next（本地完成，未推送）
-- [ ] 待真实发布：npm publish（core/vue/react）、git push、gh-pages 部署
+- [x] git push（mindoc-org/editor.md-next）
+- [ ] npm 发布（core 0.1.0 已发；vue/react 0.1.1 修复版待确认）
+- [x] gh-pages 部署
+- [x] 2026-11-08 bugfix：选区高亮三层根因 + mermaid/emoji/markmap/拖拽修复（见 ai-docs/bugfix-cm6-selection-invisible.md 与 CHANGELOG Unreleased）

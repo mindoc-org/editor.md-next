@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **选区高亮不可见（三层根因）**：`.cm-editor` 根背景层叠（zIndex:0 形成上下文）→ 聚焦态选区色被 CM 默认 #d7d4f0 压制（选择器特异度对齐）→ 活动行不透明背景遮挡（半透明化）。完整复盘见 `ai-docs/bugfix-cm6-selection-invisible.md`。
+- **mermaid 间歇性 Syntax error**：DOMPurify SAFE_FOR_XML 会剥掉值中含 `-->` 的属性 → 源文本 base64 进 data 属性；渲染串行队列（mermaid.run 不可重入）。完整复盘见 `ai-docs/architecture.md` ADR-005/006。
+- **emoji**：默认图源 webpagefx 已死 → githubassets（gemoji unicode 路径）；时间格式 12:30:45 被误转 emoji；logo 字形缺失（移植原版 editormd.logo.css）。
+- **mindmap 编辑后预览空**：markmap-autoloader 无 MutationObserver → 改为直连 markmap-lib/markmap-view 全新渲染。
+- **对话框拖拽**：改 Pointer Capture，修复 body user-select 残留导致全页无法选中文本。
+
+### Changed
+
+- `cdn.markmapJs` → `cdn.markmapBase`（markmap 三件套地址由基地址推导）。
+- 发布产物去除 sourcemap（31.8MB → 9MB）。
+
 ## 0.1.0 (2026-11-08)
 
 首个功能完整版本。editor.md（jQuery + CodeMirror 5 + 单文件 5162 行）的全 TypeScript 重写。

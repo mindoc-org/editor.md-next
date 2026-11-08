@@ -24,6 +24,20 @@ new EditorMD('#editor', {
 
 > 与原版差异：CM5 时代的 31 个 editorTheme（monokai 等）不随包迁移。可自行引入 [@uiw/codemirror-themes](https://www.npmjs.com/package/@uiw/codemirror-themes) 的主题扩展注入。
 
+## ⚠️ 自定义主题的层叠约束（重要）
+
+CM6 的 `drawSelection()` 把选区高亮画在一个 `z-index: -2` 的图层里（位于行背景之下），并且会把原生 `::selection` 强制设为透明。因此：
+
+**编辑区内任何不透明的行/元素背景都会把选区高亮完全盖住**——症状是"选区功能正常（Ctrl+X 可剪切）但视觉上看不到高亮"，极易误判为 CM6 配置问题。
+
+规则：
+
+1. 自定义主题中 `.cm-activeLine`、`.cm-line` 等行背景**必须使用半透明色**（内置主题用 `rgba(9,105,218,0.04)` / `rgba(255,255,255,0.055)`，视觉上与常见不透明色等价）。
+2. 搜索匹配高亮（`.cm-searchMatch` 等）同理保持半透明。
+3. 若给 `.cm-editor` 根元素设置不透明背景，根元素需形成层叠上下文（`position: relative; z-index: 0`），否则连选区层都会被根背景盖住。
+
+完整根因分析见仓库 `ai-docs/bugfix-cm6-selection-invisible.md`（三层遮挡物模型 + 像素级验证方法）。
+
 ## 预览区主题
 
 ```ts

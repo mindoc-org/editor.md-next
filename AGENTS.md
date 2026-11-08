@@ -40,6 +40,7 @@ scripts/                               构建辅助脚本
 - 注释与文档字符串用中文；标识符用英文。
 - 面向用户的文档一律放 `docs/`；开发过程文档放 `ai-docs/`。不要混淆两者。
 - 不引入 jQuery；DOM 操作用 `@editormd-next/utils` 的 dom 封装。
+- **编辑区内任何行/元素背景必须保持半透明**（`.cm-activeLine`、`.cm-searchMatch` 等）——不透明行背景会盖住 z-index:-2 的选区绘制层，症状是"选区可用但不可见"。详见 `ai-docs/bugfix-cm6-selection-invisible.md`；改动选区/行背景必须做像素级验证。
 - **禁止 `window.alert`/`confirm`/`prompt` 等阻塞式原生弹窗**（会阻塞 JS 线程，用户明确要求）：校验错误用对话框内 `.emd-form-error` 行内提示（`showErrorHint`）。
 - 第三方重依赖（KaTeX/mermaid/markmap）一律 CDN 懒加载，禁止打进包体；hljs/markdown-it/codemirror 允许打包。
 

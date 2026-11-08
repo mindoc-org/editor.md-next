@@ -14,6 +14,22 @@ import { EditorView } from '@codemirror/view'
 import { tags as t } from '@lezer/highlight'
 import type { ThemeName } from '../types/common'
 
+/**
+ * 行/匹配背景色必须保持半透明（alpha < 1）：drawSelection 的选区层是
+ * z-index:-2 后代，任何不透明行背景都会把它完全盖住（选区可用但不可见）。
+ * 见 ai-docs/bugfix-cm6-selection-invisible.md；单测 themes.test.ts 守护此约束。
+ */
+export const THEME_BG = {
+  light: {
+    activeLine: 'rgba(9, 105, 218, 0.04)',
+    searchMatch: 'rgba(212, 167, 44, 0.22)',
+  },
+  dark: {
+    activeLine: 'rgba(255, 255, 255, 0.055)',
+    searchMatch: 'rgba(212, 167, 44, 0.25)',
+  },
+} as const
+
 const lightTheme = EditorView.theme({
   // position+zIndex 让根元素形成层叠上下文：选区绘制层（z-index:-2）必须画在
   // 根背景之上，否则白色背景会把选区高亮完全盖住（选区功能正常但不可见）
@@ -27,11 +43,12 @@ const lightTheme = EditorView.theme({
   '.cm-selectionBackground': { backgroundColor: '#b4d5fe' },
   '.cm-content ::selection': { backgroundColor: '#b4d5fe' },
   // 白底上视觉等价于 #f6f8fa，但半透明可让下层选区蓝 #b4d5fe 透出
-  '.cm-activeLine': { backgroundColor: 'rgba(9, 105, 218, 0.04)' },
+  '.cm-activeLine': { backgroundColor: THEME_BG.light.activeLine },
   '.cm-gutters': { backgroundColor: '#ffffff', color: '#8c959f', border: 'none' },
   '.cm-activeLineGutter': { backgroundColor: '#f6f8fa', color: '#24292f' },
   '.cm-selectionMatch': { backgroundColor: '#fae17d80' },
-  '.cm-searchMatch': { backgroundColor: '#fff8c5', outline: '1px solid #d4a72c66' },
+  // 半透明（勿改回不透明色）：与 .cm-activeLine 同理，避免遮挡选区层
+  '.cm-searchMatch': { backgroundColor: THEME_BG.light.searchMatch, outline: '1px solid #d4a72c66' },
 })
 
 const darkTheme = EditorView.theme(
@@ -45,11 +62,11 @@ const darkTheme = EditorView.theme(
     '.cm-selectionBackground': { backgroundColor: '#314262' },
     '.cm-content ::selection': { backgroundColor: '#314262' },
     // 深色底上视觉等价于 #2a2e37，同样保持半透明以免遮挡选区
-    '.cm-activeLine': { backgroundColor: 'rgba(255, 255, 255, 0.055)' },
+    '.cm-activeLine': { backgroundColor: THEME_BG.dark.activeLine },
     '.cm-gutters': { backgroundColor: '#1e2127', color: '#6e7681', border: 'none' },
     '.cm-activeLineGutter': { backgroundColor: '#2a2e37', color: '#c9d1d9' },
     '.cm-selectionMatch': { backgroundColor: '#63533480' },
-    '.cm-searchMatch': { backgroundColor: '#5a4a1e', outline: '1px solid #d4a72c66' },
+    '.cm-searchMatch': { backgroundColor: THEME_BG.dark.searchMatch, outline: '1px solid #d4a72c66' },
   },
   { dark: true },
 )

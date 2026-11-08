@@ -8,6 +8,7 @@ const ROOT = new URL('../packages', import.meta.url).pathname.replace(/^\/([A-Za
 const EXTS = new Set(['.ts', '.tsx', '.css', '.mjs'])
 
 const offenders = []
+const strayDecls = []
 
 function walk(dir) {
   for (const name of readdirSync(dir)) {
@@ -20,6 +21,12 @@ function walk(dir) {
       const lines = readFileSync(full, 'utf8').split('\n').length
       if (lines > LIMIT) offenders.push({ file: relative(ROOT, full), lines })
     }
+    // 防复发：tsc 少配 outDir 时会把声明文件就地发射进源码目录，
+    // 同名 .d.ts 会遮蔽 .ts 源码的类型解析（本仓库真实踩坑）。
+    // 手写的环境声明（vite-env.d.ts）不受此限。
+    if ((name.endsWith('.d.ts') || name.endsWith('.d.ts.map')) && name !== 'vite-env.d.ts') {
+      strayDecls.push(relative(ROOT, full))
+    }
   }
 }
 
@@ -31,6 +38,12 @@ for (const pkg of readdirSync(ROOT)) {
   } catch {
     /* package without src */
   }
+}
+
+if (strayDecls.length > 0) {
+  console.error('Stray generated declaration files inside src (tsc outDir misconfiguration?):')
+  for (const f of strayDecls) console.error(`  ${f}`)
+  process.exit(1)
 }
 
 if (offenders.length > 0) {

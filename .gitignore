@@ -28,5 +28,10 @@ coverage/
 
 # tooling
 .zcode/
+.workbuddy/
 .cache/
 .vite/
+
+# tsc 少配 outDir 时就地发射的声明文件（护栏见 scripts/check-lines.mjs）
+packages/core/src/**/*.d.ts
+packages/core/src/**/*.d.ts.map

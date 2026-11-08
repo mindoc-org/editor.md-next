@@ -34,6 +34,7 @@ pnpm demo:build && pnpm demo:preview
 - **图表示例（#diagram）**：确认 `.emd-mermaid` 里**不含 "Syntax error" 文本**（mermaid 错误炸弹也是 svg，"有 svg"≠成功）；mindmap 出 svg。
 - **emoji 示例（#emoji）**：图片 `naturalWidth > 0`（alt 文字显示=加载失败）；`12:30:45` 原样保留；logo 字形可见。
 - **公式示例（#tex）**：`.katex` 元素存在。
+- **编辑器选区**：改过选区/行背景后，用**像素采样判定**（蓝色占比）而非 DOM 元素存在性——选区层元素存在但可能被不透明背景盖住（假阳性教训见 `ai-docs/bugfix-cm6-selection-invisible.md` §4）。
 - 上传示例用 mock，不需真实服务端。
 
 ## 2. 提交

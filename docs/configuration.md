@@ -99,7 +99,7 @@
 | --- | --- |
 | `katexCss` / `katexJs` | KaTeX 资源；置空串禁用 |
 | `mermaidJs` | mermaid UMD；置空串禁用 |
-| `markmapJs` | markmap-autoloader；置空串禁用 |
+| `markmapBase` | markmap 三件套（d3 / markmap-lib / markmap-view）的 npm CDN 基地址；置空串禁用 |
 
 页面已存在 `window.katex` / `window.mermaid` 时优先使用，不重复加载。
 
