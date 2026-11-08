@@ -30,3 +30,10 @@
 - 三包：`utils`（私有，源码直引，构建时打进 core）、`core`（发布）、`demo`（私有，GH Pages）。
 - utils 以 TS 源码形式被 core 引用（package.json `types`/`main` 指向 `src/index.ts`），无独立构建步骤；未来需要独立发布时再加 build。
 - core 的 d.ts 会连带产出 utils 的 `dist/types/src/index.d.ts`（tsc 对依赖源码文件的正常行为），属预期。
+
+## ADR-005 mermaid 渲染串行化（2026-11-08）
+
+- 现象：构建版示例站间歇性出现 mermaid "Syntax error in text"（dev 源码模式难复现）。
+- 根因：输入期间连续渲染使两次 `mermaid.run` 并发执行；mermaid 11 内部状态不可重入（内部 id 用时间戳生成会撞车）。
+- 修复：renderMermaidIn 引入 promise 串行队列；收集节点时立即标记 rendered（消除两次渲染收集窗口重叠导致的重复处理）；源文本继续走 data-emd-mermaid-src + textContent 注入。
+- 压测：36 次快速 setMarkdown（3 轮 × 12 次，4 种图交替）+ 示例编辑器并发渲染，0 个 error svg。

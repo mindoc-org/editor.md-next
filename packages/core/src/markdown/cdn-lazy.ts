@@ -66,23 +66,27 @@ async function ensureMermaid(cdn: CdnConfig, dark: boolean): Promise<MermaidLike
   return mermaid
 }
 
+/** mermaid 渲染串行队列：mermaid.run 不可重入，并发调用会间歇性产生解析错误 */
+let mermaidQueue: Promise<void> = Promise.resolve()
+
 /** 渲染容器内所有 .emd-mermaid（源文本在 data-emd-mermaid-src 中） */
-export async function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = false): Promise<void> {
+export function renderMermaidIn(container: HTMLElement, cdn: CdnConfig, dark = false): Promise<void> {
   const nodes = container.querySelectorAll<HTMLElement>('.emd-mermaid')
-  if (nodes.length === 0) return
-  const mermaid = await ensureMermaid(cdn, dark)
-  if (!mermaid) return
   const pending = [...nodes].filter((n) => n.dataset['emdMermaidRendered'] !== '1')
-  for (const node of pending) {
-    // 以原始文本写回，绕开转义/包裹层对 mermaid 解析的干扰
-    node.textContent = node.dataset['emdMermaidSrc'] ?? ''
-  }
-  try {
+  if (pending.length === 0) return Promise.resolve()
+
+  // 标记先行：防止两次渲染的收集窗口重叠导致同一节点被处理两次
+  for (const node of pending) node.dataset['emdMermaidRendered'] = '1'
+  // 以原始文本写回，绕开转义/包裹层对 mermaid 解析的干扰
+  for (const node of pending) node.textContent = node.dataset['emdMermaidSrc'] ?? ''
+
+  const task = mermaidQueue.then(async () => {
+    const mermaid = await ensureMermaid(cdn, dark)
+    if (!mermaid) return
     await mermaid.run({ nodes: pending, suppressErrors: true })
-    for (const node of pending) node.dataset['emdMermaidRendered'] = '1'
-  } catch (error) {
-    console.error('[editormd-next] mermaid render failed:', error)
-  }
+  })
+  mermaidQueue = task.then(() => undefined, () => undefined)
+  return task
 }
 
 let markmapLoading = false
