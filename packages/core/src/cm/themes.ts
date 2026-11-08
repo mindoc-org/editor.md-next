@@ -6,7 +6,9 @@ import { tags as t } from '@lezer/highlight'
 import type { ThemeName } from '../types/common'
 
 const lightTheme = EditorView.theme({
-  '&': { color: '#24292f', backgroundColor: '#ffffff' },
+  // position+zIndex 让根元素形成层叠上下文：选区绘制层（z-index:-2）必须画在
+  // 根背景之上，否则白色背景会把选区高亮完全盖住（选区功能正常但不可见）
+  '&': { color: '#24292f', backgroundColor: '#ffffff', position: 'relative', zIndex: 0 },
   '.cm-content': { caretColor: '#0969da' },
   '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#0969da' },
   '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
@@ -21,7 +23,7 @@ const lightTheme = EditorView.theme({
 
 const darkTheme = EditorView.theme(
   {
-    '&': { color: '#c9d1d9', backgroundColor: '#1e2127' },
+    '&': { color: '#c9d1d9', backgroundColor: '#1e2127', position: 'relative', zIndex: 0 },
     '.cm-content': { caretColor: '#58a6ff' },
     '.cm-cursor, .cm-dropCursor': { borderLeftColor: '#58a6ff' },
     '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
