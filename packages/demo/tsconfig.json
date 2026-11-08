@@ -1,13 +1,22 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "paths": {
-      "editor.md-next": ["../core/src/index.ts"],
-      "editor.md-next/css": ["../core/src/styles/index.css"],
-      "editor.md-next-vue": ["../vue/src/index.ts"],
-      "editor.md-next-react": ["../react/src/index.ts"]
+      "editor.md-next": [
+        "../core/src/index.ts"
+      ],
+      "editor.md-next-vue": [
+        "../vue/src/index.ts"
+      ],
+      "editor.md-next-react": [
+        "../react/src/index.ts"
+      ]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
