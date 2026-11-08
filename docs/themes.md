@@ -14,7 +14,12 @@ import { EditorView } from '@codemirror/view'
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language'
 import { tags as t } from '@lezer/highlight'
 
-const myTheme = EditorView.theme({ '&': { backgroundColor: '#faf4ed' } }, { dark: false })
+const myTheme = EditorView.theme({
+  // 根元素若设不透明背景，必须形成层叠上下文，否则会盖住 z-index:-2 的选区绘制层
+  '&': { backgroundColor: '#faf4ed', position: 'relative', zIndex: 0 },
+  // 行背景必须半透明，否则同样会遮挡选区高亮
+  '.cm-activeLine': { backgroundColor: 'rgba(9, 105, 218, 0.04)' },
+}, { dark: false })
 const myHighlight = HighlightStyle.define([{ tag: t.heading, color: '#eb6cac' }])
 
 new EditorMD('#editor', {
