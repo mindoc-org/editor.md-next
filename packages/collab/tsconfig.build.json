@@ -4,11 +4,15 @@
     "noEmit": false,
     "emitDeclarationOnly": true,
     "declaration": true,
-    "declarationMap": true,
+    // 不产 declarationMap：src 不随包发布，映射会指向包内不存在的文件
+    "declarationMap": false,
     "rootDir": "src",
     "outDir": "dist/types"
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/**/*.test.ts"
   ]
 }

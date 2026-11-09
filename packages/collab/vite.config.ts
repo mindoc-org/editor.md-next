@@ -18,7 +18,8 @@ export default defineConfig({
     },
     cssCodeSplit: false,
     rollupOptions: {
-      external: [/^yjs$/, /^@codemirror\//],
+      // editor.md-next 同为 peer：undoRedoFacet 必须与宿主解析到同一模块实例（facet 身份相等）
+      external: [/^yjs$/, /^@codemirror\//, /^editor\.md-next$/],
     },
     sourcemap: false,
     outDir: 'dist',

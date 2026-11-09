@@ -11,6 +11,7 @@ import { EditorState as CmEditorState } from '@codemirror/state'
 import type { Compartment } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
 import { createEditorView, markProgrammatic } from './cm/create-view'
+import { performRedo, performUndo } from './cm/undo'
 import { themeExtension } from './cm/themes'
 import { buildShortcutKeymap, bindWindowKeys } from './cm/shortcuts'
 import { applyContainerSize, layout, toCssSize } from './lifecycle/layout'
@@ -137,6 +138,23 @@ export class EditorMD {
   /** 清空内容 */
   clear(): this {
     return this.setMarkdown('')
+  }
+
+  /**
+   * 撤销一次。
+   *
+   * 默认回退 CodeMirror 内置 history；协同模式下由 `editor.md-next-collab`
+   * 通过 `undoRedoFacet` 接管，只回退本端编辑（与工具栏按钮、Mod-z 同一入口）。
+   */
+  undo(): this {
+    performUndo(this.cm)
+    return this
+  }
+
+  /** 重做一次（语义同 `undo()`） */
+  redo(): this {
+    performRedo(this.cm)
+    return this
   }
 
   // --------------------------------------------------------------- 视图模式

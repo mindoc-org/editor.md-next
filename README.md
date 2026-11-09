@@ -5,6 +5,7 @@
 [![npm version](https://img.shields.io/npm/v/editor.md-next?label=editor.md-next)](https://www.npmjs.com/package/editor.md-next)
 [![npm version](https://img.shields.io/npm/v/editor.md-next-vue?label=editor.md-next-vue)](https://www.npmjs.com/package/editor.md-next-vue)
 [![npm version](https://img.shields.io/npm/v/editor.md-next-react?label=editor.md-next-react)](https://www.npmjs.com/package/editor.md-next-react)
+[![npm version](https://img.shields.io/npm/v/editor.md-next-collab?label=editor.md-next-collab)](https://www.npmjs.com/package/editor.md-next-collab)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/示例站-GitHub%20Pages-blue?logo=github)](https://mindoc-org.github.io/editor.md-next/)
 
@@ -67,7 +68,7 @@ pnpm build:cdn    # 仅构建 core 的 CDN 产物（dist/cdn/）
 pnpm test         # vitest 单测
 pnpm typecheck    # 全 workspace 类型检查
 pnpm check:lines  # 源码 ≤600 行检查
-pnpm publish:all  # 构建并发布 core/vue/react 到 npm（见 RELEASING.md）
+pnpm publish:all  # 构建并发布四个包到 npm（core → collab → vue/react，见 RELEASING.md）
 pnpm deploy:pages # 示例站部署到 GitHub Pages（gh-pages 分支）
 ```
 

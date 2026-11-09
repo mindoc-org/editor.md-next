@@ -6,6 +6,8 @@ export type { EditorState } from './editor'
 export { renderTo } from './render-to'
 
 export { defaults, VERSION } from './defaults'
+export { performRedo, performUndo, undoRedoFacet } from './cm/undo'
+export type { UndoRedoImpl } from './cm/undo'
 export { registerLang, listLangs, resolveLang } from './i18n'
 export { registerDialog } from './dialogs/registry'
 export type { Dialog, DialogOptions, DialogButton } from './dialogs/dialog'

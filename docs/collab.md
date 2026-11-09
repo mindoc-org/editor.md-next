@@ -7,7 +7,7 @@
 - 多人**实时编辑**，断线期间的本地编辑在重连后自动合并（CRDT，无需服务器排序）
 - **远程光标与选区**实时显示（用户名 + 颜色）
 - 撤销栈只撤销**自己**的编辑（并发编辑下语义正确）
-- 服务端只需要一个**纯广播 relay**（约 40 行代码），内网自托管友好
+- 服务端只需要一个**纯广播 relay**（内置参考实现，内网自托管友好）
 
 ## 安装
 
@@ -48,12 +48,26 @@ collab.onStatus((s) => console.log('连接状态:', s))
 - 连接后自动完成一次双向同步（拉取房间内现有内容），完成后触发 `onSynced`。
 - 同步完成时若房间内容为**空**、且编辑器配置了非空 `value`，本地 value 会作为首份内容写入房间——即"第一个进入空房间的人带上草稿"。
 - 房间已有内容时以房间为准，本地 `value` 不覆盖。**协同模式建议传 `value: ''`**，避免歧义。
+- **3 秒兜底**：建连后 3 秒内没收到对端的全量回复，也视为同步完成（空房间/单人场景）。
+- **兜底不会覆盖房间内容**：只有"握手成功且房间为空"或"兜底时从未收到过任何远端消息"才写入本地 `value`。若兜底时已经见过对端消息，说明房间很可能有内容，本地 `value` **不写入**（避免合并出两份），此时如确需保留草稿请手动复制。
+- 计时从**真正建连**开始（不是 `createCollab` 调用那一刻），慢网或远距离 relay 不会提前判定同步完成。
 
 ## 撤销（undo）
 
-默认启用（`undo: true`）：拓展包接管 `Mod-z` / `Shift-Mod-z` / `Mod-y`（macOS `Cmd-z`），走 Yjs 撤销栈——**只撤销你自己的编辑**，即使远程协作者的编辑穿插其间也不会误伤。
+默认启用（`undo: true`）：拓展包通过 core 的 `undoRedoFacet` 注入 `Y.UndoManager`，因此
+**快捷键（`Mod-z` / `Shift-Mod-z` / `Mod-y`，macOS `Cmd-z`）、工具栏撤销/重做按钮、
+`editor.undo()` / `editor.redo()` 三个入口语义完全一致**——都只撤销你自己的编辑，
+即使远程协作者的编辑穿插其间也不会误伤。
 
-不想要撤销能力可传 `undo: false`。
+> 若只接管键位、不接管按钮，点工具栏"撤销"会走 CodeMirror 内置 history 从而撤到别人的编辑。
+> 0.2.0 起 core 把三个入口收敛到同一个扩展点（`undoRedoFacet` / `performUndo` / `performRedo`），
+> 所以不会再有"Ctrl-Z 正确、点按钮出错"的割裂。
+
+传 `undo: false` 表示**不启用协同撤销**：不注入 `Y.UndoManager`，撤销交回 CodeMirror 内置 history——
+键位与按钮仍能用，但栈里包含远程事务，**可能撤到别人的编辑**。除非明确知道后果，否则不要关闭。
+
+单独使用 core（不装协同包）时行为不变：`undoRedoFacet` 无注入值，撤销走内置 history。
+需要自定义撤销实现（如接入自己的操作日志）时，见 [扩展开发](plugins.md#自定义撤销实现)。
 
 ## 通道与自建服务端
 
@@ -64,9 +78,15 @@ collab.onStatus((s) => console.log('连接状态:', s))
 | `websocketTransport(url, room)` | 连接自建 relay 服务端 | 生产 / 内网 |
 | `broadcastChannelTransport(room)` | 同源多标签页 BroadcastChannel | 零服务端、本地联调、demo |
 
-### 参考服务端（约 40 行）
+### 参考服务端
 
-拓展包仓库内附带 `server/relay.mjs`：按 URL path 分房间、**原样二进制广播**（不解析内容、不落盘）。协同的全部协议语义（y-protocols sync/awareness）都在客户端实现，服务端零知识：
+拓展包仓库内附带 `server/relay.mjs`：按 URL path 分房间、**原样二进制广播**（不解析内容、不落盘）。协同的全部协议语义（y-protocols sync/awareness）都在客户端实现，服务端零知识。
+
+- 运行前需要 `ws`：`npm i ws && node node_modules/editor.md-next-collab/server/relay.mjs`（默认端口 1234，可用参数或 `PORT` 覆盖）。`ws` 不在包的运行时依赖里——浏览器使用者不该为服务端库买单。
+- 已内置基础防护：畸形房间名兜底、连接异常不中断广播、30s 心跳清理半开连接、单帧 8MB 上限。
+- **无鉴权 / 无房间权限校验 / 无限流**，仅适合内网或可信网络。公网部署请在前面加反向代理（TLS + 认证 + 限流），或换用 Hocuspocus 等带持久化与鉴权的后端。
+
+下面是协议骨架（完整实现含上述防护，见 `server/relay.mjs`）：
 
 ```js
 // 依赖：npm i ws   运行：node server/relay.mjs（默认端口 1234）
@@ -100,17 +120,17 @@ new WebSocketServer({ port: 1234 }).on('connection', (ws, req) => {
 | --- | --- | --- | --- |
 | `transport` | `CollabTransport` | 必填 | 通道适配器 |
 | `user` | `{ name?, color? }` | 自动生成 | 本地用户（awareness 广播） |
-| `undo` | `boolean` | `true` | Yjs 撤销栈（接管 undo/redo 键位） |
+| `undo` | `boolean` | `true` | 启用协同撤销（注入 `Y.UndoManager`，三个入口统一）；`false` 回退内置 history |
 | `cursors` | `boolean` | `true` | 远程光标/选区显示 |
 
 | `CollabBinding` 成员 | 说明 |
 | --- | --- |
 | `extensions` | 注入编辑器的 CM6 扩展（**必须**经 `editor.extensions` 传入） |
 | `ydoc` / `ytext` | Yjs 文档句柄（高级用法） |
-| `onPeers(handler)` | 在线成员变化（含本地），返回解绑函数 |
-| `onStatus(handler)` | 连接状态变化（`'connected' \| 'disconnected'`），返回解绑函数 |
-| `onSynced(handler)` | 首次双向同步完成，返回解绑函数 |
-| `destroy()` | 断开通道并销毁协同绑定（不销毁编辑器；编辑器 `destroy()` 前先调它） |
+| `onPeers(handler)` | 在线成员变化（含本地），注册时立即回调一次当前列表；返回解绑函数 |
+| `onStatus(handler)` | 连接状态变化（`'connected' \| 'disconnected'`），注册时若已连接会立即回调当前状态；返回解绑函数 |
+| `onSynced(handler)` | 首次同步窗口结束（握手成功或 3s 兜底），注册时若已完成会立即回调；返回解绑函数 |
+| `destroy()` | 广播本端下线 → 停同步 → 销毁撤销栈 → 关闭 transport（**不销毁编辑器**；编辑器 `destroy()` 前先调它，重复调用安全） |
 
 `randomUser()` 可单独使用（固定调色板 + 随机名字后缀），适合"昵称未登录"场景。
 

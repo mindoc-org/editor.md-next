@@ -2,12 +2,12 @@
  * 内置工具栏按钮动作。
  * 对话框类按钮统一走 editor.openDialog(name)（P5 实现），此处先注册占位。
  */
-import { redo, undo } from '@codemirror/commands'
 import { EditorSelection } from '@codemirror/state'
 import { openSearchPanel } from '@codemirror/search'
 import { dateFormat, ucwords, ucfirst } from '@editormd-next/utils'
 import type { EditorView } from '@codemirror/view'
 import type { ToolbarHandler } from '../types/settings'
+import { performRedo, performUndo } from '../cm/undo'
 
 /** 选区包裹（粗体/斜体/行内代码等） */
 function wrapSelection(view: EditorView, before: string, after: string = before): void {
@@ -79,8 +79,8 @@ function dialogStub(name: string): ToolbarHandler {
 
 /** 内置动作表（名称与原版按钮一一对应） */
 export const builtinHandlers: Record<string, ToolbarHandler> = {
-  undo: (ed) => undo(ed.cm),
-  redo: (ed) => redo(ed.cm),
+  undo: (ed) => performUndo(ed.cm),
+  redo: (ed) => performRedo(ed.cm),
   bold: (ed) => wrapSelection(ed.cm, '**'),
   del: (ed) => wrapSelection(ed.cm, '~~'),
   italic: (ed) => wrapSelection(ed.cm, '*'),

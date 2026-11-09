@@ -61,6 +61,6 @@
 
 ## ADR-008 协同编辑拓展包 editor.md-next-collab（2026-11-09，0.2.0）
 
-- **决策**：协同能力以独立发布包 `editor.md-next-collab` 承载（与 vue/react 平级）。引擎选 **yjs 13 稳定线**（`yjs ^13.5.6` peer + `y-codemirror.next ^0.3.6` + `y-protocols`），不追 Yjs v14（`@y/codemirror` 为 unstable 开发分支）。版本 0.2.0 与三包对齐。
-- **要点**：`CollabTransport` 通道抽象（服务端纯广播 relay ~40 行即可，内网友好）+ 内置 `websocketTransport` / `broadcastChannelTransport`；undo 用 `Y.UndoManager` + `Prec.highest` 键位压制 core 内置 historyKeymap（**core 零功能改动**——ySync 远程事务不带 addToHistory 标记，内置 history 语义错误）；远程光标/选区内置（awareness，遵守半透明铁律）；仅支持 npm/bundler 场景（CDN 双实例约束，见 ADR-007）。
+- **决策**：协同能力以独立发布包 `editor.md-next-collab` 承载（与 vue/react 平级）。引擎选 **yjs 13 稳定线**（`yjs ^13.5.6` peer + `y-codemirror.next ^0.3.6` + `y-protocols`），不追 Yjs v14（`@y/codemirror` 为 unstable 开发分支）。版本 0.2.0 与四包（core / vue / react / collab）对齐。
+- **要点**：`CollabTransport` 通道抽象（服务端纯广播 relay，内网友好）+ 内置 `websocketTransport` / `broadcastChannelTransport`；撤销经 core 新增的 `undoRedoFacet` 注入 `Y.UndoManager`——**快捷键、工具栏按钮、`editor.undo()` 三者同源**（最初只用 `Prec.highest` 压键位，实现期发现工具栏按钮仍走内置 history、会撤到他人编辑，故提升为 core 的通用扩展点；详见 `collab-design.md` §5.2）；远程光标/选区内置（awareness，遵守半透明铁律）；仅支持 npm/bundler 场景（CDN 双实例约束，见 ADR-007）。
 - **调研与设计全文**：`ai-docs/collab-design.md`。被拒绝的备选（OT 路线、core 内置、core re-export 方案）见该文 §1.2。

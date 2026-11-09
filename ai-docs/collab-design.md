@@ -41,24 +41,24 @@
 packages/collab   editor.md-next-collab    发布包（0.2.0）
   src/
     index.ts                 导出 createCollab / transports / 类型
-    binding.ts               createCollab 编排（extensions 组装 + 生命周期）
+    binding.ts               createCollab 编排（extensions 组装 + 生命周期 + undoRedoFacet 注入）
+    types.ts                 公共类型（CollabTransport / CollabOptions / CollabBinding…）
     transport/
-      types.ts               CollabTransport 接口
-      websocket.ts           websocketTransport（简易 relay 协议客户端）
+      websocket.ts           websocketTransport（简易 relay 协议客户端，指数退避 + 抖动重连）
       broadcast.ts           broadcastChannelTransport（同源多标签页）
-    sync.ts                  y-protocols sync/awareness 编解码 + 消息泵
-    undo.ts                  Y.UndoManager + Prec.highest 键位（Mod-z / Shift-Mod-z / Mod-y）
-    cursors.ts               远程光标主题（半透明合规覆写）+ randomUser 调色板
+    sync.ts                  y-protocols sync/awareness 编解码 + 消息泵 + 同步窗口时序
+    cursors.ts               远程光标配色（colorLight 半透明派生）+ randomUser 调色板
+  server/relay.mjs           参考 relay（纯广播；心跳/异常隔离/体积上限，无鉴权）
   peerDependencies:
-    editor.md-next   ^0.2.0
+    editor.md-next     ^0.2.0   （undoRedoFacet 必须与宿主同一实例）
     @codemirror/state  ^6.0.0
     @codemirror/view   ^6.0.0
-    yjs               ^13.5.6
+    yjs                ^13.5.6
   dependencies:
     y-codemirror.next ^0.3.6
     y-protocols       ^1.0.6
     lib0              ^0.2.x
-  构建：vite lib 模式 es/cjs + d.ts；**全部 peer external**（与 core 相反——拓展包绝不能内联 CM6/yjs）
+  构建：vite lib 模式 es/cjs + d.ts；**全部 peer external**（yjs / @codemirror/* / editor.md-next）
   不提供 IIFE/CDN 产物：CDN 场景 core IIFE 内联自己的 CM6 副本，与拓展包必然双实例（见 §2），只支持 npm/bundler。
 ```
 
@@ -125,7 +125,7 @@ export interface CollabBinding {
 
 export function createCollab(options: CollabOptions): CollabBinding
 
-/** 内置通道：WebSocket 直连简易 relay（见 §6，服务端 ~40 行）。room 为 URL path。 */
+/** 内置通道：WebSocket 直连简易 relay（见 §6）。room 为 URL path。 */
 export function websocketTransport(url: string, room: string): CollabTransport
 
 /** 内置通道：同源多标签页 BroadcastChannel（零服务端，demo/本地联调用）。 */
@@ -140,15 +140,41 @@ export function randomUser(): CollabUser
 ### 5.1 初始同步与初始 value
 
 - 连接后走 y-protocols sync：本地发 SyncStep1（state vector）→ 对端回 SyncStep2（全量 diff）→ 此后增量 update 双向流。
-- `onSynced` 触发（首次双向同步完成）时：若 `ytext.length === 0` 且编辑器初始 `value` 非空 → **把 value 写入 ytext**（本地是空房间的第一个客户端）；否则以服务端内容为准（**协同模式建议 `value: ''`**）。
+- `onSynced` 触发（首次同步窗口结束）时：若 `ytext.length === 0` 且编辑器初始 `value` 非空 → **把 value 写入 ytext**（本地是空房间的第一个客户端）；否则以服务端内容为准（**协同模式建议 `value: ''`**）。
 - `onSynced` 之前的短暂窗口内允许本地输入（CRDT 会自动合并），但文档明示"初始内容以服务端为准"。
 
-### 5.2 撤销栈（core 零功能改动）
+**实现期修订（两处时序缺陷）**：
 
-- 默认 `undo: true`：collab 包创建 `Y.UndoManager(ytext)`，并用 **`Prec.highest(keymap)`** 绑定 `Mod-z` / `Shift-Mod-z` / `Mod-y` → 直接调 Yjs undo/redo。用户 extensions 在 `create-view.ts:76` 是数组末位、`Prec.highest` 显式置顶 → **压制 core 内置 `historyKeymap`**（后者保留但不再被触发，仅多占少量内存，可接受）。
-- 为什么不用 CM6 内置 history 当协同撤销：ySync 应用远程事务**不带** `addToHistory: false`（源码核实），远程变更会进 CM6 history 栈，Mod-z 会撤销到别人的编辑——语义错误，必须绕开。
-- y-codemirror.next 的 yUndoManager 插件自带 `beforeinput` 拦截（覆盖输入法/浏览器菜单的原生 undo/redo 路径），与我们的 keymap 双保险。
-- 曾考虑给 core 加 `editor.history?: boolean` 开关（禁用内置 history），暂不做：Prec.highest 方案已闭环，core 保持"只做构建级改动"。实现期若发现不足再补。
+1. 3s 兜底计时原本从 `start()`（即 `createCollab` 调用）起算，不是从建连起算。慢网/远 relay 下
+   会在握手前误判"同步完成"，把本地 `value` 写进仍在等待房间内容的 ytext，随后与房间内容合并
+   出**两份**。现改为：`start()` 只登记监听，由 transport 的 `connected` 事件启动计时；
+   无 `onStatus` 的通道（内存/自定义）才在 `start()` 时直接启动。
+2. 兜底触发时新增 `remoteSeen` 判定：同步窗口内**收到过任何远端帧**说明房间很可能有内容，
+   此时不授权写入初始 `value`（保留 pending，等迟到 Step2）。只有"握手成功且 ytext 空"
+   或"兜底且从未见远端"才写入。
+
+### 5.2 撤销栈（core 增加通用扩展点，不做协同耦合）
+
+**最终方案（实现期修订）**：core 提供 `undoRedoFacet` + `performUndo/performRedo`，
+collab 通过 `undoRedoFacet.of({ undo, redo })` 注入 `Y.UndoManager`。
+
+- core 侧：`handlers.ts` 的工具栏 `undo/redo` 与 `shortcuts.ts` 的 `Mod-z`/`Shift-Mod-z`/`Mod-y`
+  都改走 `performUndo/performRedo`；`editor.undo()/redo()` 也走同一入口。
+- collab 侧：注入实现后，**快捷键、工具栏按钮、公共方法三者语义一致**，只撤销自己的编辑。
+- `undo: false` 时不注入，回退 CM6 内置 history（文档明确"可能撤到他人编辑"）。
+
+**为什么放弃最初的 `Prec.highest(keymap)` 方案**：键位可以压过 core 的 `historyKeymap`，
+但**工具栏按钮**调的是 `@codemirror/commands` 的 `undo()`，绕不过去——走查时只测了 Ctrl-Z，
+漏掉了按钮。根治办法只能是让按钮和键位共用同一个入口，因此把"撤销实现"提升为 core 的扩展点。
+这也顺带满足"undo/redo 是通用能力，非协同场景也需要可控"的诉求（可接自定义操作日志）。
+
+- 为什么不用 CM6 内置 history 当协同撤销：ySync 应用远程事务**不带** `addToHistory: false`
+  （源码核实：y-codemirror.next 全仓无此标记），远程变更会进 CM6 history 栈，撤销会撤到别人。
+  改成统一入口后，内置 history 栈虽仍记录远程事务，但**不再有任何 UI 入口触达它**。
+- y-codemirror.next 的 yUndoManager 插件自带 `beforeinput` 拦截（覆盖输入法/浏览器菜单的原生
+  undo/redo 路径），与 facet 入口构成双保险。
+- 曾考虑给 core 加 `editor.history?: boolean` 开关（彻底禁掉内置 history），暂不做：
+  统一入口已闭环，少一个配置项就少一分误用面。
 
 ### 5.3 远程光标与选区主题（半透明铁律）
 
@@ -178,7 +204,7 @@ export function randomUser(): CollabUser
 
 ## 6. 服务端
 
-### 6.1 参考 relay（随 collab 包发布 `server/relay.mjs` + 文档内嵌源码，~40 行）
+### 6.1 参考 relay（随 collab 包发布 `server/relay.mjs`）
 
 协议：**纯二进制广播**。`ws://host/<room>`，服务端按 URL path 分房间，收到任意二进制消息原样转发给同房间**其他**连接（不解析、不落盘、不回发本人）。所有 y-protocols 语义都在客户端——服务端零知识即可协同。
 
@@ -202,11 +228,19 @@ new WebSocketServer({ port: 1234 }).on('connection', (ws, req) => {
 
 ## 7. 测试策略
 
-- **jsdom 环境无真实 ws/BroadcastChannel** → 测试用内存 transport 对（两条 `Uint8Array` 队列互倒），**两个 EditorMD 实例对打**：
-  - A 输入 → B 文档收敛（含并发交叉编辑，最终一致）；
-  - A undo → 只回退 A 自己的编辑，B 的交叉编辑保留；
-  - `onSynced` / `onPeers` 触发时序；`destroy` 后不再收发。
-- **check:selection**：collab 光标/选区装饰接入后必跑像素探针（半透明铁律）。
+- **jsdom 环境无真实 ws/BroadcastChannel，也无法可靠创建 CM6 视图** → 测试用内存 transport 对
+  （两条 `Uint8Array` 队列互倒）直连两个 binding（非 EditorMD 实例）。
+- 撤销语义不需要视图：用 `EditorState.create({ extensions: binding.extensions })` 取出
+  `undoRedoFacet` 的实现后直接调用，即可覆盖"A undo 只回退 A、B 的交叉编辑保留"。
+- 当前覆盖（`packages/collab/src/collab.test.ts`，14 例 + core `undo.test.ts` 3 例）：
+  - 双端收敛 / 并发交叉编辑最终一致 / 接力编辑；
+  - undo 隔离（经 facet）、`undo:false` 不注入 facet；
+  - `onSynced` / `onPeers` / `onStatus` 回放时序、慢连接下计时从建连起算；
+  - 畸形帧丢弃且不影响后续同步；`destroy` 广播下线、关闭 transport、幂等。
+- **已知缺口（仍靠人工走查）**：编辑器级行为（工具栏按钮点击、远程光标渲染、预览刷新）
+  没有自动化用例——`#collab` 示例为手工/截图验证对象。
+- **check:selection**：默认 URL 是 `#basics`；改过协同光标/选区后需显式
+  `pnpm check:selection -- --url http://127.0.0.1:4173/#collab`（未纳入默认清单）。
 - demo 用 `broadcastChannelTransport`（GH Pages 静态站无 ws 也能演示：双开标签页即实时协同）。
 
 ## 8. 里程碑拆分（对应 TODO.md P12）

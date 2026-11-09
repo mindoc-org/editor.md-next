@@ -9,7 +9,7 @@ export const collabExample: Example = {
   id: 'collab',
   title: '协同编辑（拓展包 editor.md-next-collab）',
   description:
-    '零服务端演示：同页双实例经 BroadcastChannel 实时协同（yjs CRDT）。左侧输入，右侧实时出现；双方光标带名字与颜色；Ctrl-Z 只撤销自己的编辑。真实部署可用 websocketTransport + 40 行 relay（见 docs/collab.md）。',
+    '零服务端演示：同页双实例经 BroadcastChannel 实时协同（yjs CRDT）。左侧输入，右侧实时出现；双方光标带名字与颜色；Ctrl-Z 与工具栏撤销按钮都只撤销自己的编辑。真实部署可用 websocketTransport + 内置 relay（见 docs/collab.md）。',
   render(container) {
     const host = exampleShell(container, this.title, this.description)
 
@@ -45,11 +45,16 @@ export const collabExample: Example = {
     })
 
     const renderStatus = (peers: CollabPeer[]): void => {
-      const parts = peers.map((p) => {
-        const tag = `${p.local ? '（本端）' : ''}`
-        return `<span style="color:${p.color};font-weight:600">${p.name}${tag}</span>`
+      status.textContent = `在线成员（${peers.length}）：`
+      peers.forEach((p, i) => {
+        if (i > 0) status.append('、')
+        const name = document.createElement('span')
+        // awareness 里的 name/color 来自对端（不可信），必须走 textContent 而非 innerHTML
+        name.textContent = p.name + (p.local ? '（本端）' : '')
+        name.style.color = p.color
+        name.style.fontWeight = '600'
+        status.append(name)
       })
-      status.innerHTML = `在线成员（${peers.length}）：${parts.join('、')}`
     }
     bindingA.onPeers(renderStatus)
     bindingB.onPeers(renderStatus)

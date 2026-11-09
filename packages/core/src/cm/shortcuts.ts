@@ -42,6 +42,11 @@ export const SHORTCUT_MAP: Record<string, string> = {
   'Shift-Alt-p': 'pagebreak',
   'Shift-Mod-n': 'clear',
   'Mod-f': 'search',
+  // 撤销/重做统一走 performUndo/performRedo（本 keymap 优先级高于 create-view 内置的
+  // defaultKeymap/historyKeymap，因此协同场景注入 undoRedoFacet 后键位与工具栏按钮同源）
+  'Mod-z': 'undo',
+  'Shift-Mod-z': 'redo',
+  'Mod-y': 'redo',
 }
 
 /** 窗口级功能键（编辑器失焦时也生效，对齐原版 window keydown 绑定） */
@@ -68,7 +73,8 @@ export function buildShortcutKeymap(editor: EditorMD): Extension {
       },
     })
   }
-  // 原生 undo/redo 已由 defaultKeymap 提供，此处不重复
+  // undo/redo 已在上方 SHORTCUT_MAP 显式绑定（不再依赖 defaultKeymap 的原生绑定），
+  // 这样 disabledKeys 可屏蔽它们，协同场景也能被 undoRedoFacet 接管。
   return keymap.of(bindings)
 }
 

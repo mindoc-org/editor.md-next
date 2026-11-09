@@ -43,8 +43,9 @@ export interface CollabOptions {
   /** 本地用户；缺省用 randomUser() 自动生成 */
   user?: CollabUser
   /**
-   * 撤销栈：true（默认）= Y.UndoManager，只撤销自己的编辑（接管 Mod-z/Shift-Mod-z/Mod-y）；
-   * false = 不提供协同撤销（core 内置 history 仍在，但协同语义下不建议用）
+   * 撤销栈：true（默认）= 通过 core 的 `undoRedoFacet` 注入 `Y.UndoManager`，
+   * 快捷键 / 工具栏按钮 / `editor.undo()` 都只撤销自己的编辑；
+   * false = 不注入，回退 core 内置 history（栈里含远程事务，可能撤到他人编辑，不建议）
    */
   undo?: boolean
   /** 远程光标/选区显示（默认 true）；false 时仍可收到 onPeers 成员列表 */
@@ -60,13 +61,13 @@ export interface CollabBinding {
   ytext: Text
   /** 在线成员变化（含本地；注册时立即回调一次当前列表），返回解绑函数 */
   onPeers(handler: (peers: CollabPeer[]) => void): () => void
-  /** 连接状态变化，返回解绑函数 */
+  /** 连接状态变化（注册时若已连接会立即回调当前状态），返回解绑函数 */
   onStatus(handler: (status: CollabStatus) => void): () => void
   /**
-   * 首次完成同步握手（收到对端全量状态；空房间 3s 内无对端响应时也视为完成）。
+   * 首次同步窗口结束（收到对端全量状态，或建连后 3s 无响应兜底）。
    * 触发时机与「初始 value 写入房间」相关，见 docs/collab.md 初始同步一节。返回解绑函数。
    */
   onSynced(handler: () => void): () => void
-  /** 断开通道并销毁协同绑定（不销毁编辑器实例本身；编辑器 destroy 前先调它） */
+  /** 广播下线 → 停同步 → 销毁撤销栈 → 关闭 transport（不销毁编辑器；可重复调用） */
   destroy(): void
 }

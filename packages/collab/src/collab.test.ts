@@ -4,6 +4,8 @@
  */
 import { describe, expect, it, vi } from 'vitest'
 import { EditorState } from '@codemirror/state'
+import type { EditorView } from '@codemirror/view'
+import { undoRedoFacet } from 'editor.md-next'
 import { createCollab, deriveColorLight, randomUser } from './index'
 import type { CollabPeer, CollabTransport } from './types'
 
@@ -32,6 +34,10 @@ function memoryPair() {
   })
   return {
     transports: [makeTransport(0), makeTransport(1)] as const,
+    /** 直接向某一端投递任意字节（模拟畸形帧/恶意对端）。 */
+    deliver(idx: 0 | 1, data: Uint8Array) {
+      for (const handler of subscribers[idx]) handler(data)
+    },
     drain() {
       while (queue.length > 0) {
         const item = queue.shift() as { from: 0 | 1; data: Uint8Array }
@@ -201,5 +207,127 @@ describe('用户信息工具', () => {
     expect(deriveColorLight('#30bced')).toBe('#30bced33')
     expect(deriveColorLight('red')).toBe('#8899aa33')
     expect(deriveColorLight('#30bce')).toBe('#8899aa33')
+  })
+})
+
+describe('createCollab 撤销（core undoRedoFacet 分派）', () => {
+  it('undo 只回退本端编辑，保留对端内容', () => {
+    const pair = memoryPair()
+    const a = createCollab({ transport: pair.transports[0] })
+    const b = createCollab({ transport: pair.transports[1] })
+    pair.drain()
+
+    // 与编辑器同构：从 state 取出注入的实现（工具栏/快捷键都经 performUndo 走它）
+    const impl = EditorState.create({ extensions: a.extensions }).facet(undoRedoFacet)
+    expect(impl).not.toBeNull()
+
+    // origin 为 null 的事务才在 Y.UndoManager 默认追踪范围内
+    a.ydoc.transact(() => a.ytext.insert(0, 'AAA'))
+    pair.drain()
+    b.ydoc.transact(() => b.ytext.insert(b.ytext.length, 'BBB'))
+    pair.drain()
+    expect(a.ytext.toString()).toBe('AAABBB')
+
+    expect(impl?.undo({} as unknown as EditorView)).toBe(true)
+    pair.drain()
+    expect(a.ytext.toString()).toBe('BBB')
+    expect(b.ytext.toString()).toBe('BBB')
+
+    a.destroy()
+    b.destroy()
+  })
+
+  it('undo: false 不注入 facet（回退 core 内置 history）', () => {
+    const pair = memoryPair()
+    const a = createCollab({ transport: pair.transports[0], undo: false })
+    expect(EditorState.create({ extensions: a.extensions }).facet(undoRedoFacet)).toBeNull()
+    a.destroy()
+  })
+})
+
+describe('createCollab 时序与健壮性', () => {
+  it('慢连接：兜底计时从建连起算，未建连不误报 onSynced', () => {
+    vi.useFakeTimers()
+    try {
+      // 用容器保存回调：直接在 let 变量上做可选调用会被 TS 收窄成 never（赋值发生在回调里）
+      const ref: { status?: (s: 'connected' | 'disconnected') => void } = {}
+      const transport: CollabTransport = {
+        send() {},
+        onMessage() {
+          return () => {}
+        },
+        onStatus(handler) {
+          ref.status = handler
+          return () => {}
+        },
+        destroy() {},
+      }
+      const binding = createCollab({ transport })
+      const onSynced = vi.fn()
+      binding.onSynced(onSynced)
+
+      vi.advanceTimersByTime(3000)
+      expect(onSynced).not.toHaveBeenCalled()
+
+      ref.status?.('connected')
+      vi.advanceTimersByTime(2999)
+      expect(onSynced).not.toHaveBeenCalled()
+      vi.advanceTimersByTime(1)
+      expect(onSynced).toHaveBeenCalledTimes(1)
+
+      binding.destroy()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('畸形帧被丢弃且不影响后续同步', () => {
+    const pair = memoryPair()
+    const a = createCollab({ transport: pair.transports[0] })
+    const b = createCollab({ transport: pair.transports[1] })
+    pair.drain()
+
+    // 0xff 起头的 varuint 永远读不完 → 解码越界，必须被吞掉而不是冒到通道回调
+    expect(() => pair.deliver(1, new Uint8Array([0xff, 0xff, 0xff]))).not.toThrow()
+    expect(() => pair.deliver(1, new Uint8Array([0x01, 0xff]))).not.toThrow()
+
+    a.ydoc.transact(() => a.ytext.insert(0, 'ok'))
+    pair.drain()
+    expect(b.ytext.toString()).toBe('ok')
+
+    a.destroy()
+    b.destroy()
+  })
+
+  it('onStatus 注册即回放当前状态，destroy 补发 disconnected', () => {
+    const pair = memoryPair()
+    const a = createCollab({ transport: pair.transports[0] })
+    const seen: string[] = []
+    a.onStatus((status) => seen.push(status))
+    expect(seen).toEqual(['connected'])
+
+    a.destroy()
+    expect(seen).toEqual(['connected', 'disconnected'])
+  })
+
+  it('destroy 关闭 transport 且可重复调用', () => {
+    let destroyed = 0
+    const transport: CollabTransport = {
+      send() {},
+      onMessage() {
+        return () => {}
+      },
+      onStatus(handler) {
+        handler('connected')
+        return () => {}
+      },
+      destroy() {
+        destroyed++
+      },
+    }
+    const binding = createCollab({ transport })
+    binding.destroy()
+    binding.destroy()
+    expect(destroyed).toBe(1)
   })
 })

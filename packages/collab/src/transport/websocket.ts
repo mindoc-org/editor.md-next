@@ -39,8 +39,9 @@ export function websocketTransport(url: string, room: string): CollabTransport {
       socket = null
       if (closed) return
       emitStatus('disconnected')
-      const delay = Math.min(RECONNECT_MAX_MS, RECONNECT_BASE_MS * 2 ** retries++)
-      reconnectTimer = setTimeout(connect, delay)
+      const backoff = Math.min(RECONNECT_MAX_MS, RECONNECT_BASE_MS * 2 ** retries++)
+      // 抖动 50%~100%：多客户端同时断线时避免同一时刻集中重连（惊群）
+      reconnectTimer = setTimeout(connect, Math.round(backoff * (0.5 + Math.random() * 0.5)))
     }
     socket.onerror = () => socket?.close()
   }

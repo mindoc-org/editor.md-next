@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.2.0（进行中）
+## 0.2.0 (2026-11-09)
 
-> 目标：协同编辑拓展包 `editor.md-next-collab` 首发 + core npm 产物外置化 `@codemirror/*`（ADR-007/008，见 `ai-docs/collab-design.md`）。随 P12 推进补充条目，发布时定稿。
+> 协同编辑拓展包 `editor.md-next-collab` 首发 + core npm 产物外置化 `@codemirror/*`（ADR-007/008，见 `ai-docs/collab-design.md`）。四包（core / vue / react / collab）版本对齐 0.2.0。
 
 ### Added
 
@@ -14,6 +14,11 @@
 ### Fixed
 
 - 协同光标发布：y-codemirror.next 内置发布以 `document.hasFocus()` 为门槛（后台标签页永不发布、失焦不清除残留），拓展包改用编辑器自身焦点语义（聚焦发布选区、失焦清除）。
+- **撤销统一入口（破坏性语义修正）**：core 新增 `undoRedoFacet` / `performUndo` / `performRedo` 与 `editor.undo()/redo()`；工具栏撤销/重做按钮原直接调 `@codemirror/commands`，协同模式下会走内置 history 从而撤销到他人编辑，现与快捷键同源。
+- **初始同步时序**：3s 兜底计时改为从真正建连起算（原从 `createCollab` 起算，慢网下会在握手前误判完成）；兜底时若同步窗口内见过远端帧则不写入本地 `value`，避免与房间内容合并出两份。
+- **协同生命周期**：`destroy()` 补关闭 transport、销毁 `Y.UndoManager`、重复调用幂等；`onStatus` 注册时回放当前状态；断线时清理远端成员（不再残留 30s）；畸形二进制帧被丢弃而不冒泡到通道回调。
+- **relay 加固**：房间名 URI 解码容错、单连接 error 隔离、30s 心跳清理半开连接、单帧 8MB 上限、`ws` 缺失时给出可操作提示。
+- demo 协同示例成员列表改用 `textContent` 构造 DOM（awareness 的 name/color 来自对端，原 `innerHTML` 拼接存在注入风险）。
 
 ### Added（2026-11-08 已落地）
 

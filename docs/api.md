@@ -17,6 +17,8 @@ new EditorMD(el: string | HTMLElement, options?: EditorUserOptions)
 | `getHtml(): string` | 最近一次渲染的 HTML |
 | `getPreviewedHtml(): string` | 预览区当前 DOM HTML |
 | `clear(): this` | 清空 |
+| `undo(): this` | 撤销一次（协同模式下只回退本端编辑，与工具栏/快捷键同一入口） |
+| `redo(): this` | 重做一次 |
 
 ## 视图模式
 

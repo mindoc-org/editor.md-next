@@ -138,9 +138,15 @@
 - [x] 新包 packages/collab：editor.md-next-collab 骨架（peer 全外置 + vite lib es/cjs + d.ts，产物 ~10.6KB gz）
 - [x] collab：CollabTransport 抽象 + y-protocols sync/awareness 消息泵 + createCollab 编排（挂载对齐/初始 value/断线重连补齐）
 - [x] collab：websocketTransport（简易 relay 协议）+ broadcastChannelTransport + 参考服务端 server/relay.mjs
-- [x] collab：Y.UndoManager + Prec.highest 键位（yUndoManagerKeymap 压制内置 historyKeymap）
+- [x] collab：撤销经 core `undoRedoFacet` 注入 Y.UndoManager（键位/工具栏/`editor.undo()` 同源；原 Prec.highest 方案已废弃，见下方核查修复）
 - [x] collab：远程光标/选区主题（colorLight 半透明派生）+ randomUser
-- [x] collab：测试——内存 transport 双 binding 收敛/并发合并/onSynced/onPeers/destroy/空房间兜底（8 例）
+- [x] collab：测试——内存 transport 双 binding 收敛/并发合并/onSynced/onPeers/destroy/空房间兜底（基线 8 例，核查后补至 14 例）
+- [x] 0.2.0 核查修复：撤销统一入口（core `undoRedoFacet` + `performUndo/performRedo` + `editor.undo()/redo()`；修复工具栏按钮走内置 history、会撤到他人编辑）
+- [x] 0.2.0 核查修复：同步时序（3s 兜底改从建连起算 + `remoteSeen` 判定，避免慢网下初始 value 与房间内容重复）
+- [x] 0.2.0 核查修复：生命周期与健壮性（`destroy` 关闭 transport/销毁 UndoManager/幂等、`onStatus` 回放当前状态、断线清远端成员、畸形帧容错）
+- [x] 0.2.0 核查修复：relay 加固（URI 解码容错、error 隔离、30s 心跳、8MB 帧上限、`ws` 缺失友好提示）
+- [x] 0.2.0 核查修复：测试补齐（collab +6 例、core undo/shortcuts +5 例，共 71 例全绿；含 undo 隔离/慢连接/畸形帧/destroy/快捷键绑定）
+- [x] 0.2.0 核查修复：文档与示例一致性（feature-parity 新增能力表、WORKFLOW 四包、design §3/§5/§7、ADR-008、demo XSS）
 - [x] vue：defineExpose({ editor })；react 已有 defaultValue 与 ref 句柄，无需改
 - [x] demo：协同示例（BroadcastChannel 双编辑器，静态站可演示）+ vue/react 文档协同用法与受控同步限制
 - [x] 浏览器走查：初始同步（空房间 value 写入→广播→对端接收）✓、实时输入双向 ✓、Ctrl-Z 撤销同步 ✓、远程光标+名字标签 ✓、成员列表 ✓；check:selection——basics 3/3 PASS，collab drag/keyboard PASS（dblclick 0.492<0.5 为 H1 大标题行采样形态稀释，截图确认选区清晰可见，非遮挡）

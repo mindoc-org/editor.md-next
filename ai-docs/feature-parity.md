@@ -2,6 +2,10 @@
 
 > 原版基线：IBM Skills Network fork v1.7.17（pandao 1.5.0 内核），`src/editormd.js` 5162 行 + `css/editormd.css` 4356 行。
 > 状态图例：✅ 已实现｜🚧 施工中｜⬜ 计划（对应 TODO.md 阶段）｜❌ 明确不做
+>
+> **维护说明**：本表是 P0 立项时的**原版能力对照基线**（用于确认"原版有的我们都要有"），
+> 各阶段实际完成度以 `TODO.md` 为准（P0~P11 已全部勾选）。原版没有的**新增能力**
+> （协同编辑、Vue/React 适配、离线部署等）记录在文末「0.2.0 新增能力」表，不混入本表。
 
 ## 编辑器核心
 
@@ -100,3 +104,16 @@
 | CDN IIFE 全局 `editormd` + css + fonts | ⬜ P8 |
 | demo 站（ESM 与 `<script>` 双方式示例） | ⬜ P9 |
 | docs/ 用户文档 | ⬜ P10 |
+
+## 0.2.0 新增能力（非原版对照）
+
+| 能力 | 状态 | 说明 |
+|---|---|---|
+| 协同编辑拓展包 `editor.md-next-collab` | ✅ | yjs CRDT；独立包，不装不影响核心体积与行为 |
+| 多人实时编辑 / 断线重连合并 | ✅ | y-protocols sync；WebSocket 指数退避 + 抖动重连 |
+| 远程光标与选区（用户名 + 颜色） | ✅ | awareness；背景色经 `colorLight` 派生保持半透明（遵守选区铁律） |
+| 撤销/重做（协同语义） | ✅ | core `undoRedoFacet` 统一入口：快捷键 / 工具栏按钮 / `editor.undo()` 同源 |
+| 通道抽象 + 内置 WebSocket / BroadcastChannel | ✅ | 可桥接 Hocuspocus、PartyKit 等（实现 `CollabTransport`） |
+| 参考 relay 服务端 | ✅ | 纯广播、不落盘；含心跳/异常隔离/体积上限，无鉴权需内网使用 |
+| `@codemirror/*` 外置为 peer（ADR-007） | ✅ | 使 `editor.extensions` 对 npm 用户真正可用，CDN IIFE 保持自包含 |
+| Vue 3 / React 组件适配 | ✅ | 受控绑定在协同模式下须降级为单向（文档已警示） |

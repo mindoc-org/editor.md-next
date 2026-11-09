@@ -7,6 +7,7 @@
 | 改动内容 | 本地验证 | npm 更新 | git push | Pages 更新 |
 | --- | --- | --- | --- | --- |
 | core 源码（编辑器功能/修复） | ✅ 四件套 + preview 走查 | ✅ 发版时 | ✅ | demo 受影响时 ✅ |
+| collab 拓展包（协同/通道/relay） | ✅ 四件套 + `#collab` 示例走查 + `check:selection` | ✅ 发版时 | ✅ | 协同示例有变化时 ✅ |
 | vue / react 适配包 | ✅ 四件套 + demo 对应示例 | ✅ 发版时 | ✅ | ✅（示例要能看到效果） |
 | demo / 示例 | ✅ demo:build + preview | ❌ | ✅ | ✅ |
 | docs / ai-docs / README | ❌（可选 build） | ❌ | ✅ | ❌ |
@@ -16,9 +17,9 @@
 ## 1. 本地验证（每次必做）
 
 ```bash
-pnpm typecheck      # 5 包类型检查
-pnpm test           # vitest（50+ 例）
-pnpm build          # 全量构建（utils → core → vue/react → demo）
+pnpm typecheck      # 6 包类型检查
+pnpm test           # vitest（60+ 例）
+pnpm build          # 全量构建（utils → core → collab → vue/react → demo）
 pnpm check:lines    # 单文件 ≤600 行 + 防游离 .d.ts
 ```
 
@@ -36,6 +37,7 @@ pnpm check:selection                   # 改过选区/行背景时必跑：真�
 - **emoji 示例（#emoji）**：图片 `naturalWidth > 0`（alt 文字显示=加载失败）；`12:30:45` 原样保留；logo 字形可见。
 - **公式示例（#tex）**：`.katex` 元素存在。
 - **编辑器选区**：改过选区/行背景后必跑 `pnpm check:selection`（需先 `pnpm demo:preview`）。脚本用真实 Chrome 派发双击 / 水平拖动 / 跨行键盘选区，截图后统计选区矩形内蓝色背景像素占比（默认 > 0.5 才算 PASS），三场景全绿才算通过。**不可用 DOM 元素存在性判定**——选区层元素存在但可能被不透明背景盖住（假阳性教训见 `ai-docs/bugfix-cm6-selection-invisible.md` §4）。可选参数：`--url`（默认 `http://127.0.0.1:4173/#basics`）、`--threshold`、`--save-shots <dir>`；`CHROME_PATH` 指定浏览器；脚本自启自停独立 Chrome 实例（Node ≥22 内置 CDP 客户端，无额外依赖）。
+- **协同示例（#collab）**：双开标签页或用页面内左右两个实例走查——左侧输入右侧实时出现；远程光标带名字标签；`Ctrl-Z` 与**工具栏撤销按钮**都只回退本端编辑（点按钮不要撤到对端内容）；成员列表随关闭标签页更新。改过选区/光标后需补跑 `pnpm check:selection -- --url http://127.0.0.1:4173/#collab`。
 - 上传示例用 mock，不需真实服务端。
 
 ## 2. 提交
@@ -69,18 +71,19 @@ pnpm deploy:pages
 
 ### 5.1 何时需要
 
-core / vue / react 任一源码有**用户可感知**的改动（功能、修复、产物变化）时发版。纯文档/demo 改动不需要。
+core / collab / vue / react 任一源码有**用户可感知**的改动（功能、修复、产物变化）时发版。纯文档/demo 改动不需要。
 
 ### 5.2 版本号
 
-手动改对应包 `package.json` 的 `version`（遵循 semver：修复 +1 patch、新功能 +1 minor、破坏性 +1 major）。**已发布的版本号不可覆盖**。三包版本不必强求一致，但同一次功能性发版建议一起 bump 并在 CHANGELOG.md 记录。
+手动改对应包 `package.json` 的 `version`（遵循 semver：修复 +1 patch、新功能 +1 minor、破坏性 +1 major）。**已发布的版本号不可覆盖**。四包版本不必强求一致，但同一次功能性发版建议一起 bump 并在 CHANGELOG.md 记录（collab 依赖 `editor.md-next` 的 peer 版本区间，跨 minor 发版必须同步）。
 
 ### 5.3 发布
 
 ```bash
-pnpm publish:all            # 一键：全量构建 + 按依赖序发布（core → vue/react）
+pnpm publish:all            # 一键：全量构建 + 按依赖序发布（core → collab → vue/react）
 # 或单包：
 pnpm -C packages/core publish
+pnpm -C packages/collab publish
 ```
 
 - 内置护栏：`prepublishOnly` 会自动重新构建，没 dist 发不出去

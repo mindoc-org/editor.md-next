@@ -6,22 +6,22 @@
  * - 挂载对齐：编辑器创建时若房间已有内容（ytext 非空），以房间为准替换编辑器文档。
  *   该事务用 ySyncAnnotation.of(conf) 标注（与 y-codemirror.next 的远端事务同形），
  *   y-sync 视其为远端来源、跳过「编辑器→ytext」回写，避免错位映射写坏 ytext。
- * - 初始 value：空房间且编辑器有初始内容时，首次同步完成后把 value 写入 ytext
- *   （先清空编辑器再经 ytext 回填，保证 yjs 是唯一事实源），并广播给房间。
- * - 撤销：Y.UndoManager 交给 y-codemirror.next 插件自动 addTrackedOrigin(syncConf)，
- *   只追踪本地编辑；Prec.highest 键位压制 core 内置 historyKeymap（远程事务会进
- *   CM6 history 栈，若不压制，Mod-z 会撤销到别人的编辑——语义错误）。
+ * - 初始 value：确认房间为空时才写入 ytext（先清空编辑器再经 ytext 回填，保证 yjs 是唯一
+ *   事实源）；"确认"= 收到对端 Step2（此时 ytext 仍空），或兜底超时且未见过任何远端帧。
+ * - 撤销：通过 core 的 undoRedoFacet 注入 Y.UndoManager，使**工具栏按钮 / 快捷键 /
+ *   editor.undo() 共用同一实现**；只追踪本地编辑，不会撤到别人的内容。
  */
 import * as Y from 'yjs'
 import { Awareness } from 'y-protocols/awareness'
-import { EditorView, ViewPlugin, keymap } from '@codemirror/view'
+import { EditorView, ViewPlugin } from '@codemirror/view'
 import type { ViewUpdate } from '@codemirror/view'
-import { Prec } from '@codemirror/state'
 import type { Extension } from '@codemirror/state'
-import { yCollab, ySyncAnnotation, ySyncFacet, yUndoManagerKeymap } from 'y-codemirror.next'
+import { yCollab, ySyncAnnotation, ySyncFacet } from 'y-codemirror.next'
+import { undoRedoFacet } from 'editor.md-next'
 import { SyncPump } from './sync'
+import type { SyncInfo } from './sync'
 import { deriveColorLight, randomUser } from './cursors'
-import type { CollabBinding, CollabOptions, CollabPeer, CollabUser } from './types'
+import type { CollabBinding, CollabOptions, CollabPeer, CollabStatus, CollabUser } from './types'
 
 /** 初始 value 写入 ytext 的事务 origin（与本地编辑/远端更新都不同源，不入撤销栈）。 */
 const INIT_ORIGIN = 'editormd-collab-init'
@@ -46,10 +46,13 @@ export function createCollab(options: CollabOptions): CollabBinding {
   const undoManager = options.undo === false ? false : new Y.UndoManager(ytext)
 
   const peersHandlers = new Set<(peers: CollabPeer[]) => void>()
-  const statusHandlers = new Set<(status: 'connected' | 'disconnected') => void>()
+  const statusHandlers = new Set<(status: CollabStatus) => void>()
   const syncedHandlers = new Set<() => void>()
   let view: EditorView | null = null
   let synced = false
+  let destroyed = false
+  let currentStatus: CollabStatus | null = null
+  /** 编辑器带着初始 value 进入空房间，等待"确认房间为空"后写入。 */
   let pendingInitialValue = false
 
   const emitPeers = (): void => {
@@ -57,27 +60,32 @@ export function createCollab(options: CollabOptions): CollabBinding {
     for (const handler of peersHandlers) handler(peers)
   }
 
-  const emitStatus = (status: 'connected' | 'disconnected'): void => {
+  const emitStatus = (status: CollabStatus): void => {
+    currentStatus = status
     for (const handler of statusHandlers) handler(status)
   }
 
-  const emitSynced = (): void => {
+  const emitSynced = (info: SyncInfo): void => {
     synced = true
-    if (pendingInitialValue) {
-      pendingInitialValue = false
-      applyInitialValue()
-    }
+    // 握手成功：ytext 为空即代表房间确实没有内容，可安全写入本地草稿。
+    // 超时兜底：只有同步窗口内没见过任何远端帧才视为空房间；见过远端则保留 pending，
+    // 等迟到的 Step2（onSyncStep2）再判断，避免与房间内容合并出两份。
+    if (info.kind === 'handshake' || !info.remoteSeen) trySeed()
     for (const handler of syncedHandlers) handler()
   }
 
-  /** 空房间兜底走完后的初始 value 写入：清空编辑器 → 写 ytext → 观察者回填（见文件头注释）。 */
-  function applyInitialValue(): void {
+  /**
+   * 尝试把编辑器初始内容写入 ytext。返回 true 表示"已处理"（写过，或本来就不该写），
+   * 返回 false 表示编辑器尚未就绪、需要后续重试。
+   */
+  function applyInitialValue(): boolean {
     const v = view
-    if (!v) return
+    if (!v) return false
     const conf = v.state.facet(ySyncFacet)
-    if (!conf || ytext.length > 0) return
+    if (!conf) return false
+    if (ytext.length > 0) return true
     const docText = v.state.doc.toString()
-    if (!docText) return
+    if (!docText) return true
     v.dispatch({
       changes: { from: 0, to: v.state.doc.length, insert: '' },
       annotations: ySyncAnnotation.of(conf),
@@ -85,6 +93,12 @@ export function createCollab(options: CollabOptions): CollabBinding {
     ydoc.transact(() => {
       ytext.insert(0, docText)
     }, INIT_ORIGIN)
+    return true
+  }
+
+  function trySeed(): void {
+    if (!pendingInitialValue || destroyed) return
+    if (applyInitialValue()) pendingInitialValue = false
   }
 
   /** 编辑器挂载后的对齐：房间有内容则以房间为准替换编辑器文档。 */
@@ -104,9 +118,8 @@ export function createCollab(options: CollabOptions): CollabBinding {
       return
     }
     if (docText.length > 0) {
-      // 编辑器带初始 value 且房间为空：同步完成后写入；若同步早已完成则立即写
-      if (synced) applyInitialValue()
-      else pendingInitialValue = true
+      pendingInitialValue = true
+      if (synced) trySeed()
     }
   }
 
@@ -130,6 +143,8 @@ export function createCollab(options: CollabOptions): CollabBinding {
     transport: options.transport,
     onStatus: emitStatus,
     onSynced: emitSynced,
+    // 迟到的 Step2（重连、超时后对端才回包）到达时补做初始 value 判断
+    onSyncStep2: trySeed,
     onPeersChanged: emitPeers,
   })
   pump.start()
@@ -190,14 +205,19 @@ export function createCollab(options: CollabOptions): CollabBinding {
           ),
         ]
 
-  const extensions: Extension[] = [
-    attachPlugin,
-    ...cursorPublisher,
-    // 压制 core 内置 historyKeymap（create-view.ts 的 keymap 在前，用户扩展在后、优先级更高）
-    ...(undoManager ? [Prec.highest(keymap.of(yUndoManagerKeymap))] : []),
-    // cursors: false 时不传 awareness——y-codemirror.next 据此跳过远程选区/光标插件
-    yCollab(ytext, options.cursors === false ? undefined : awareness, { undoManager }),
-  ]
+  const extensions: Extension[] = [attachPlugin, ...cursorPublisher]
+  if (undoManager) {
+    const manager = undoManager
+    // 交给 core 的撤销扩展点：工具栏按钮与键位都走这里（core 默认回退内置 history）
+    extensions.push(
+      undoRedoFacet.of({
+        undo: () => manager.undo() !== null,
+        redo: () => manager.redo() !== null,
+      }),
+    )
+  }
+  // cursors: false 时不传 awareness——y-codemirror.next 据此跳过远程选区/光标插件
+  extensions.push(yCollab(ytext, options.cursors === false ? undefined : awareness, { undoManager }))
 
   return {
     extensions,
@@ -209,6 +229,8 @@ export function createCollab(options: CollabOptions): CollabBinding {
       return () => peersHandlers.delete(handler)
     },
     onStatus(handler) {
+      // 回放当前状态：调用方不必猜"现在到底连上了没有"（未知阶段不回调）
+      if (currentStatus !== null) handler(currentStatus)
       statusHandlers.add(handler)
       return () => statusHandlers.delete(handler)
     },
@@ -218,9 +240,15 @@ export function createCollab(options: CollabOptions): CollabBinding {
       return () => syncedHandlers.delete(handler)
     },
     destroy() {
+      if (destroyed) return
+      destroyed = true
       // 先广播自己的下线，再停泵（顺序反过来成员列表就收不到退出事件）
       awareness.destroy()
       pump.destroy()
+      if (undoManager) undoManager.destroy()
+      // 通知末态后再释放通道与订阅者
+      emitStatus('disconnected')
+      options.transport.destroy()
       ydoc.destroy()
       peersHandlers.clear()
       statusHandlers.clear()

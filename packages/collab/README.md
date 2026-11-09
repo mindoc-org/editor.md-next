@@ -9,7 +9,7 @@
 - 多人实时编辑，断线期间本地编辑在重连后自动合并
 - 远程光标/选区实时显示（用户名 + 颜色，背景半透明）
 - 撤销栈只撤销自己的编辑（并发下语义正确）
-- 服务端只需纯广播 relay（内置参考实现 `server/relay.mjs`，约 40 行）
+- 服务端只需纯广播 relay（内置参考实现 `server/relay.mjs`）
 
 ## 安装
 
@@ -17,7 +17,7 @@
 pnpm add editor.md-next editor.md-next-collab yjs
 ```
 
-`yjs` / `@codemirror/*` 为 peer 依赖（自动安装，与核心包共享同一 CM6 实例）。仅支持 npm/bundler 场景（CDN 双实例约束，见主仓库 FAQ）。
+`yjs` / `@codemirror/*` / `editor.md-next` 为 peer 依赖（自动安装，与核心包共享同一 CM6 实例）。仅支持 npm/bundler 场景（CDN 双实例约束，见主仓库 FAQ）。
 
 ## 快速开始
 
@@ -40,6 +40,19 @@ collab.onPeers((peers) => console.table(peers))
 ```
 
 本地零服务端体验：`broadcastChannelTransport('room-1')`（同源多标签页协同）。
+
+撤销/重做默认启用，**快捷键、工具栏按钮、`editor.undo()/redo()` 三者语义一致**（经 core 的
+`undoRedoFacet` 注入 `Y.UndoManager`，只撤销本端编辑）。
+
+## 自建服务端
+
+```bash
+npm i ws
+node node_modules/editor.md-next-collab/server/relay.mjs 1234
+```
+
+`ws` 不在运行时依赖中（浏览器使用者无需安装）。relay 是纯广播、不落盘、**无鉴权**，仅适合内网或可信网络；
+公网部署请前置反向代理做 TLS + 认证 + 限流。
 
 ## 文档
 
