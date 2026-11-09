@@ -42,9 +42,11 @@ pnpm -C packages/core pack --dry-run
 
 ## 三、版本号
 
-- 手动修改各包 `package.json` 的 `version`（core → vue/react 依次）
+- 手动修改各包 `package.json` 的 `version`（发布序：core → collab → vue/react）
 - **npm 版本不可覆盖**：同名同版本一经发布无法重发；发错了只能升版本重发 + `npm deprecate` 标记旧版
-- 适配包依赖写法是 `"editor.md-next": "workspace:^"`，`pnpm publish` 会自动替换成真实版本号（如 `^0.1.0`）——**因此必须用 pnpm 发布，不能用 npm publish**
+- 适配包依赖写法是 `"editor.md-next": "workspace:^"`，`pnpm publish` 会自动替换成真实版本号（如 `^0.2.0`）——**因此必须用 pnpm 发布，不能用 npm publish**
+- **collab 的 `editor.md-next` 走 `peerDependencies`（`^0.2.0` 区间），必须先发 core 再发 collab**；跨 minor 发版时两者区间要同步放宽，否则用户安装会触发 peer 冲突
+- 注：peer 声明不会让 collab 出现在 npm 页面 core 的 Dependents 列表（该列表只统计 `dependencies`），属预期，详见 `ai-docs/architecture.md` ADR-008「依赖声明」
 
 ## 四、发布
 
@@ -84,6 +86,7 @@ pnpm -C packages/core publish --otp=123456
 
 ```bash
 npm view editor.md-next version dist.unpackedSize
+npm view editor.md-next-collab version   # 应为 0.2.0，且 peerDependencies 含 editor.md-next
 npm view editor.md-next-vue dist.unpackedSize   # 应为 ~100KB 级别（含 dist）
 ```
 
@@ -97,7 +100,7 @@ https://cdn.jsdelivr.net/npm/editor.md-next/dist/index.css
 ## 六、Tag 与 GitHub Release
 
 ```bash
-git tag v0.1.1 && git push origin v0.1.1
+git tag v0.2.0 && git push origin v0.2.0   # 用本次版本号，tag 指向发版提交
 ```
 
 在 GitHub Releases 页面基于 tag 创建 Release（changelog 取自 `CHANGELOG.md` 对应版本段落）。

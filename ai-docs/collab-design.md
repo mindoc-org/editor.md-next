@@ -13,7 +13,7 @@
 | 依赖 | 仅 `@codemirror/state`，体积极小 | peer 依赖 `yjs ^13.5.6`（~30KB gz 量级）+ `lib0`；本周下载 ~35.6 万，2026-08 仍在发版 |
 | 与 CM6 内置 history | **天然兼容**：源码核实 `receiveUpdates` 对远程事务打 `Transaction.addToHistory.of(false)`，远程变更不进本地 undo 栈 | 远程事务经 `ySyncAnnotation` 应用、**未标记 addToHistory** → 会进 CM6 内置 history 栈；Mod-z 会撤销到别人的编辑，必须压制（见 §5.2） |
 | 远程光标/选区 | **不含**，需自研 decorations（官方示例明说"这是你自己的事"） | **内置**：`yCollab(ytext, awareness)` 传 awareness 即含 `yRemoteSelections` 插件（源码核实），用户名/颜色开箱即用 |
-| 服务端 | 按官方示例自写 ~100-150 行版本化 authority（含 `rebaseUpdates` rebase 逻辑） | 现成方案多（y-websocket / Hocuspocus / PartyKit），且**纯广播 relay ~40 行**即可 |
+| 服务端 | 按官方示例自写 ~100-150 行版本化 authority（含 `rebaseUpdates` rebase 逻辑） | 现成方案多（y-websocket / Hocuspocus / PartyKit），且**纯广播 relay 核心逻辑 ~40 行**即可（实际实现含心跳/帧上限/URI 容错为 109 行） |
 | 离线/内网 | 弱（依赖在线权威） | 强（契合 0.1.x 已落地的离线/内网方向） |
 
 **决策：yjs 路线**。远程光标/在线人数/离线容忍/自建 relay 开箱即用，服务端与光标是用户采用协同的真正门槛。注意 **Yjs v14（`@y/codemirror`）仍是 unstable 开发分支**（官方 README 明确"多数用户应继续用 y-codemirror.next + Yjs 13"），锁定稳定线 `yjs ^13.5.6 + y-codemirror.next ^0.3.6`。
@@ -250,4 +250,4 @@ new WebSocketServer({ port: 1234 }).on('connection', (ws, req) => {
 3. undo + 远程光标主题（半透明合规 + check:selection）
 4. relay 参考服务端 + demo 协同示例（BroadcastChannel）
 5. vue defineExpose({ editor })（react 已有句柄，无需改）+ 适配包文档
-6. 发版：四包 0.2.0 对齐（CHANGELOG、tag、npm publish:all 扩展为四包）
+6. 发版：四包 0.2.0 对齐（CHANGELOG、tag、npm publish:all 扩展为四包）——✅ 2026-11-09 已发布，tag `v0.2.0`

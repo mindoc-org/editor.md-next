@@ -19,6 +19,8 @@ pnpm add editor.md-next editor.md-next-collab yjs
 
 `yjs` / `@codemirror/*` / `editor.md-next` 为 peer 依赖（自动安装，与核心包共享同一 CM6 实例）。仅支持 npm/bundler 场景（CDN 双实例约束，见主仓库 FAQ）。
 
+> 只装本包也会自动带入 `editor.md-next`。因它是 peer 声明，npm 页面的 Dependents 标签不会把本包列在核心包下（该标签只统计 `dependencies`）——属预期，不是漏依赖。
+
 ## 快速开始
 
 ```ts

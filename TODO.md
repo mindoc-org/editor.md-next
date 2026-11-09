@@ -124,11 +124,11 @@
 - [x] docs/vue3.md + docs/react.md
 - [x] 仓库引用统一 mindoc-org/editor.md-next（本地完成，未推送）
 - [x] git push（mindoc-org/editor.md-next）
-- [ ] npm 发布（core 0.1.0 已发；vue/react 0.1.1 修复版待确认）
+- [x] npm 发布（core 0.1.1 + vue/react 0.1.2 已发布，2026-11-08；0.2.0 见 P12）
 - [x] gh-pages 部署
 - [x] 2026-11-08 bugfix：选区高亮三层根因 + mermaid/emoji/markmap/拖拽修复（见 ai-docs/bugfix-cm6-selection-invisible.md 与 CHANGELOG Unreleased）
 
-## P12 协同编辑与 core 外置化（0.2.0，2026-11-09 立项）
+## P12 协同编辑与 core 外置化（0.2.0，2026-11-09 立项 · 已发布）
 
 > 设计定稿见 `ai-docs/collab-design.md`，决策见 `ai-docs/architecture.md` ADR-007/008，用户文档 `docs/collab.md`。
 
@@ -150,4 +150,4 @@
 - [x] vue：defineExpose({ editor })；react 已有 defaultValue 与 ref 句柄，无需改
 - [x] demo：协同示例（BroadcastChannel 双编辑器，静态站可演示）+ vue/react 文档协同用法与受控同步限制
 - [x] 浏览器走查：初始同步（空房间 value 写入→广播→对端接收）✓、实时输入双向 ✓、Ctrl-Z 撤销同步 ✓、远程光标+名字标签 ✓、成员列表 ✓；check:selection——basics 3/3 PASS，collab drag/keyboard PASS（dblclick 0.492<0.5 为 H1 大标题行采样形态稀释，截图确认选区清晰可见，非遮挡）
-- [ ] 发版：core/vue/react 0.2.0 + collab 0.2.0 首发（publish:all 扩为四包，CHANGELOG/tag/Release）
+- [x] 发版：四包 0.2.0 已发布（2026-11-09，`pnpm publish:all` + tag `v0.2.0`；npm 上 core/vue/react/collab 均为 0.2.0）

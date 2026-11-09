@@ -15,9 +15,11 @@
 pnpm add editor.md-next editor.md-next-collab yjs
 ```
 
-依赖关系：`yjs` 与 `@codemirror/*` 是拓展包的 peer 依赖，包管理器（npm ≥ 7 / pnpm / yarn berry）会自动安装并与核心包**共享同一份实例**，无需手动处理。
+依赖关系：`editor.md-next`、`yjs` 与 `@codemirror/*` 都是拓展包的 **peer 依赖**，包管理器（npm ≥ 7 / pnpm / yarn berry）会自动安装并与核心包**共享同一份实例**，无需手动处理。只装 `editor.md-next-collab` 也会自动带入 `editor.md-next`。
 
 > **仅支持 npm / bundler 场景**。CDN `<script>` 标签方式不支持协同：CodeMirror 6 要求全页共享同一份 `@codemirror/state` 实例，而 CDN 版核心包内联了自己的副本（详见 FAQ）。
+>
+> 另：`editor.md-next` 是 peer 声明，npm 网站的 Dependents 标签只统计 `dependencies`、不统计 peer，所以 collab 不会出现在核心包的 dependents 列表——属预期；若改成 `dependencies` 会引入第二份 core/CM6 实例，导致撤销注入静默失效。
 
 ## 快速开始
 
@@ -164,6 +166,9 @@ const collab = createCollab({ transport: broadcastChannelTransport('room-1') })
 
 **Q：为什么不直接内置在 `editor.md-next` 里？**
 协同依赖 yjs（~30KB gz）并要求 `@codemirror/*` 以 peer 依赖共享。保持核心包纯净、按需安装是拓展包方案的设计初衷；`@codemirror/*` 外置化（0.2.0）正是为此铺路。
+
+**Q：能用 CDN `<script>` 标签引入核心包，再接协同吗？**
+不能。协同扩展依赖 `@codemirror/state` 的模块单例，而 CDN/IIFE 版核心包内联了自己的 CM6 副本，与 npm 安装的拓展包必然形成双实例——facet、扩展、文档状态互不识别。请用 npm/bundler（Vite、webpack、Rollup 均可）。
 
 **Q：多个协同实例 / 多个房间？**
 每个房间一个 `createCollab` + 一个 `EditorMD` 实例，与其他实例互不影响。

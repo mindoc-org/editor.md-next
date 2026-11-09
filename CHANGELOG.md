@@ -6,7 +6,7 @@
 
 ### Added
 
-- **协同编辑拓展包 `editor.md-next-collab`**（yjs CRDT）：多人实时编辑（断线重连自动合并）、远程光标/选区（用户名+颜色，背景半透明）、撤销只作用于自己的编辑（`Y.UndoManager` + `Prec.highest` 键位）；`CollabTransport` 通道抽象 + 内置 `websocketTransport`（连自建 relay）/`broadcastChannelTransport`（零服务端）；参考服务端 `server/relay.mjs`（约 40 行纯广播）。见 `docs/collab.md`。
+- **协同编辑拓展包 `editor.md-next-collab`**（yjs CRDT）：多人实时编辑（断线重连自动合并）、远程光标/选区（用户名+颜色，背景半透明）、撤销只作用于自己的编辑（`Y.UndoManager`，经 core `undoRedoFacet` 注入——快捷键 / 工具栏 / `editor.undo()` 同源）；`CollabTransport` 通道抽象 + 内置 `websocketTransport`（连自建 relay）/`broadcastChannelTransport`（零服务端）；参考服务端 `server/relay.mjs`（纯广播，含心跳/帧上限/URI 容错加固，109 行）。见 `docs/collab.md`。
 - **core npm 产物外置 `@codemirror/*` + `@lezer/*`（转 peerDependencies）**：宿主注入的 CM6 扩展与 core 共享同一实例，`editor.extensions` 对 npm 用户真正可用；UMD 产物 1.98MB → 406KB。CDN/IIFE 产物保持全打包自包含。包管理器（npm ≥ 7 / pnpm）安装时自动带上 peer 依赖。
 - demo 新增「协同编辑」示例（BroadcastChannel 同页双编辑器，静态站可演示）。
 - vue 组件通过 `defineExpose` 暴露编辑器实例（与 react 句柄对齐）。

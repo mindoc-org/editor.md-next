@@ -28,6 +28,7 @@
 ## ADR-004 包结构（2026-11-08）
 
 - 三包：`utils`（私有，源码直引，构建时打进 core）、`core`（发布）、`demo`（私有，GH Pages）。
+- 后续演进（2026-11-09，0.2.0）：新增 `vue` / `react` / `collab` 三个发布包，ADR-004 的「三包」仅描述 0.1.x 时的结构；当前发布包为四个，依赖方向见 `AGENTS.md`。
 - utils 以 TS 源码形式被 core 引用（package.json `types`/`main` 指向 `src/index.ts`），无独立构建步骤；未来需要独立发布时再加 build。
 - core 的 d.ts 会连带产出 utils 的 `dist/types/src/index.d.ts`（tsc 对依赖源码文件的正常行为），属预期。
 
@@ -63,4 +64,5 @@
 
 - **决策**：协同能力以独立发布包 `editor.md-next-collab` 承载（与 vue/react 平级）。引擎选 **yjs 13 稳定线**（`yjs ^13.5.6` peer + `y-codemirror.next ^0.3.6` + `y-protocols`），不追 Yjs v14（`@y/codemirror` 为 unstable 开发分支）。版本 0.2.0 与四包（core / vue / react / collab）对齐。
 - **要点**：`CollabTransport` 通道抽象（服务端纯广播 relay，内网友好）+ 内置 `websocketTransport` / `broadcastChannelTransport`；撤销经 core 新增的 `undoRedoFacet` 注入 `Y.UndoManager`——**快捷键、工具栏按钮、`editor.undo()` 三者同源**（最初只用 `Prec.highest` 压键位，实现期发现工具栏按钮仍走内置 history、会撤到他人编辑，故提升为 core 的通用扩展点；详见 `collab-design.md` §5.2）；远程光标/选区内置（awareness，遵守半透明铁律）；仅支持 npm/bundler 场景（CDN 双实例约束，见 ADR-007）。
+- **依赖声明**：`editor.md-next` 与 `@codemirror/*` / `yjs` 一律走 `peerDependencies`（npm ≥ 7 会自动安装并去重），**不写 `dependencies`**。原因：facet 身份由模块实例决定，拓展包必须与宿主共享同一份 `@codemirror/state` 与 core 实例；自带副本会让 `undoRedoFacet` 注入静默失效（撤销退回会撤到他人编辑）。副作用是 npm 页面的 Dependents 只统计 `dependencies`、不统计 peer，故 collab **不会**出现在 `editor.md-next` 的 dependents 列表——这是预期行为，与 vue/react 采用 `dependencies` 的声明方式有意不同。
 - **调研与设计全文**：`ai-docs/collab-design.md`。被拒绝的备选（OT 路线、core 内置、core re-export 方案）见该文 §1.2。

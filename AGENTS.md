@@ -7,7 +7,7 @@
 | 命令 | 作用 |
 |---|---|
 | `pnpm dev` | 启动 demo 站（packages/demo，Vite dev server） |
-| `pnpm build` | 按依赖顺序构建全部包（utils → core → demo） |
+| `pnpm build` | 按依赖顺序构建全部包（utils → core → collab → vue/react → demo） |
 | `pnpm build:lib` / `pnpm build:cdn` | 仅构建 core 的 npm 产物 / CDN 产物 |
 | `pnpm test` / `pnpm test:watch` | vitest 单测 |
 | `pnpm typecheck` | 全 workspace `tsc --noEmit` |
