@@ -10,6 +10,7 @@ import {
   upload,
 } from './features'
 import { reactExample, vue3Example } from './adapters'
+import { collabExample } from './collab'
 import type { Example } from './types'
 
 export const EXAMPLES: Example[] = [
@@ -29,4 +30,5 @@ export const EXAMPLES: Example[] = [
   renderToExample,
   vue3Example,
   reactExample,
+  collabExample,
 ]

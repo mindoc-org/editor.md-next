@@ -45,6 +45,12 @@ const editorRef = useRef<EditorMDHandle>(null)
 // editorRef.current?.editor —— EditorMD 实例
 ```
 
+## 协同编辑
+
+配合 [`editor.md-next-collab`](collab.md) 使用：在组件外创建 binding，把 `collab.extensions` 传入 `options.editor.extensions` 即可，组件无需任何协同专用配置。
+
+**协同模式下不要传受控 `value`**：受控回写会调 `setMarkdown` 全量替换文档，覆盖远程协作者的编辑。用 `defaultValue`（非受控）+ `onChange` 单向同步即可。
+
 ## 实现说明
 
 - `forwardRef` + 命令式句柄；事件回调经 ref 读取，回调身份变化不会重建编辑器

@@ -133,14 +133,15 @@
 > 设计定稿见 `ai-docs/collab-design.md`，决策见 `ai-docs/architecture.md` ADR-007/008，用户文档 `docs/collab.md`。
 
 - [x] 文档先行：ADR-007/008 + collab-design.md + docs/collab.md + 版本对齐 0.2.0
-- [ ] core：es/umd 外置 `@codemirror/*` + `@lezer/*` 并转 peerDependencies，IIFE/CDN 保持全打包（ADR-007）
-- [ ] core：`VERSION` 与 package.json 对齐修正（原硬编码 0.1.0，未随 0.1.1 bump）
-- [ ] 新包 packages/collab：editor.md-next-collab 骨架（peer 全外置 + vite lib es/cjs + d.ts）
-- [ ] collab：CollabTransport 抽象 + y-protocols sync/awareness 消息泵 + createCollab 编排
-- [ ] collab：websocketTransport（简易 relay 协议）+ broadcastChannelTransport + 参考服务端 server/relay.mjs
-- [ ] collab：Y.UndoManager + Prec.highest 键位（压制内置 historyKeymap）
-- [ ] collab：远程光标/选区主题（半透明合规）+ randomUser
-- [ ] collab：测试——内存 transport 双 EditorMD 实例收敛/undo/destroy + check:selection
-- [ ] vue：defineExpose({ editor })；react 补 defaultValue prop（非受控）
-- [ ] demo：协同示例（BroadcastChannel 双标签页，静态站可演示）+ vue/react 文档协同用法与受控同步限制
+- [x] core：es/umd 外置 `@codemirror/*` + `@lezer/*` 并转 peerDependencies，IIFE/CDN 保持全打包（ADR-007；UMD 2.0MB→406KB，Node 冒烟通过）
+- [x] core：`VERSION` 与 package.json 对齐修正（原硬编码 0.1.0，未随 0.1.1 bump）
+- [x] 新包 packages/collab：editor.md-next-collab 骨架（peer 全外置 + vite lib es/cjs + d.ts，产物 ~10.6KB gz）
+- [x] collab：CollabTransport 抽象 + y-protocols sync/awareness 消息泵 + createCollab 编排（挂载对齐/初始 value/断线重连补齐）
+- [x] collab：websocketTransport（简易 relay 协议）+ broadcastChannelTransport + 参考服务端 server/relay.mjs
+- [x] collab：Y.UndoManager + Prec.highest 键位（yUndoManagerKeymap 压制内置 historyKeymap）
+- [x] collab：远程光标/选区主题（colorLight 半透明派生）+ randomUser
+- [x] collab：测试——内存 transport 双 binding 收敛/并发合并/onSynced/onPeers/destroy/空房间兜底（8 例）
+- [x] vue：defineExpose({ editor })；react 已有 defaultValue 与 ref 句柄，无需改
+- [x] demo：协同示例（BroadcastChannel 双编辑器，静态站可演示）+ vue/react 文档协同用法与受控同步限制
+- [x] 浏览器走查：初始同步（空房间 value 写入→广播→对端接收）✓、实时输入双向 ✓、Ctrl-Z 撤销同步 ✓、远程光标+名字标签 ✓、成员列表 ✓；check:selection——basics 3/3 PASS，collab drag/keyboard PASS（dblclick 0.492<0.5 为 H1 大标题行采样形态稀释，截图确认选区清晰可见，非遮挡）
 - [ ] 发版：core/vue/react 0.2.0 + collab 0.2.0 首发（publish:all 扩为四包，CHANGELOG/tag/Release）

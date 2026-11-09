@@ -1,6 +1,6 @@
 # 发布指南（npm / GitHub）
 
-> 本文档记录 editor.md-next 三包（`editor.md-next`、`editor.md-next-vue`、`editor.md-next-react`）的 npm 登录与发布流程。命令均在仓库根目录执行。
+> 本文档记录 editor.md-next 四包（`editor.md-next`、`editor.md-next-collab`、`editor.md-next-vue`、`editor.md-next-react`）的 npm 登录与发布流程。命令均在仓库根目录执行。
 
 ## 一、npm 登录（首次）
 
@@ -38,7 +38,7 @@ curl -s -o /dev/null -w "%{http_code}" https://registry.npmjs.org/<包名>
 pnpm -C packages/core pack --dry-run
 ```
 
-> 防呆机制：三包已配置 `prepublishOnly: pnpm -w build`，publish 时会自动全量构建——**没有 dist 就发不出去**。但首次发布前仍建议手动 `pnpm build` 并检查。
+> 防呆机制：四包已配置 `prepublishOnly: pnpm -w build`，publish 时会自动全量构建——**没有 dist 就发不出去**。但首次发布前仍建议手动 `pnpm build` 并检查。
 
 ## 三、版本号
 
@@ -51,13 +51,14 @@ pnpm -C packages/core pack --dry-run
 ### 方式一：一键发布全部（推荐）
 
 ```bash
-pnpm publish:all     # = pnpm -r build && pnpm -r publish（按依赖序 core → vue/react）
+pnpm publish:all     # = pnpm -r build && pnpm -r publish（按依赖序 core → collab → vue/react）
 ```
 
 ### 方式二：单包发布
 
 ```bash
 pnpm -C packages/core publish
+pnpm -C packages/collab publish
 pnpm -C packages/vue publish
 pnpm -C packages/react publish
 ```

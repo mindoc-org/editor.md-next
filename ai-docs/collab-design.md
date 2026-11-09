@@ -155,6 +155,7 @@ export function randomUser(): CollabUser
 - `yCollab` 传 awareness 时内置 `yRemoteSelections` 插件：远程选区背景 + 光标 + 用户名标签，颜色取 awareness `user.color` / `user.colorLight`（collab 包负责把 `color` 推导出 `colorLight`）。
 - **必须遵守 AGENTS.md 半透明规范**：`.cm-ySelection*` 等远程选区背景一律 alpha（y-codemirror.next 默认主题已是半透明，实现时用 `cursors.ts` 复核并按需覆写）；改过选区/行背景必跑 `pnpm check:selection` 像素验证。
 - `cursors: false` 时不传 awareness 给 yCollab（纯文本同步，无光标装饰）。
+- **光标发布（自研补丁，走查中发现）**：y-codemirror.next 的内置光标发布以 `document.hasFocus()` 为门槛——后台标签页/自动化环境永不发布，且失焦分支写反（`&& hasFocus`）导致残留光标不清除。binding.ts 的 `cursorPublisher` 插件改用**编辑器自身焦点**语义：聚焦发布选区相对位置、失焦清除；与内置发布共存（document 有焦点时两者写同值）。已实测：BroadcastChannel 双实例、远程光标+名字标签渲染正常。
 
 ### 5.4 与 core 管线的交互（无需改造，已核实）
 

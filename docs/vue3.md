@@ -48,8 +48,15 @@ const editorRef = ref()
 </template>
 ```
 
+## 协同编辑
+
+配合 [`editor.md-next-collab`](collab.md) 使用：在组件外创建 binding，把 `collab.extensions` 传入 `options.editor.extensions` 即可，组件无需任何协同专用配置。
+
+**协同模式下必须关闭受控回写**：`v-model` 的外部值变化会调 `setMarkdown` 全量替换文档，等于用本地全文覆盖远程协作者。请改用单向绑定——不用 `v-model`，改听 `@update:modelValue` 只收不发。
+
 ## 实现说明
 
 - 组件用渲染函数实现（无 SFC 编译依赖），`peerDependencies: vue >= 3.2`
 - 引擎 `editor.md-next` 为普通 dependency（外部化不打包）
 - 外部 `modelValue` 变化通过程序性替换同步（不触发回环）；组件卸载时自动 `destroy()`
+- 通过 `ref` 暴露编辑器实例（`defineExpose`，0.2.0 起）

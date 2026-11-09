@@ -106,6 +106,9 @@ export const EditorMD = defineComponent({
       editor.value = null
     })
 
+    // 暴露编辑器实例（协同拓展/高级用法可直接拿 .cm 与 react 适配对齐）
+    defineExpose({ editor })
+
     return () =>
       h('div', {
         ref: host,

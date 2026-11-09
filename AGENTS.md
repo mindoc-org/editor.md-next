@@ -13,7 +13,7 @@
 | `pnpm typecheck` | 全 workspace `tsc --noEmit` |
 | `pnpm check:lines` | 检查源码文件 ≤ 600 行（超限即 CI 失败）+ 防游离 `.d.ts` |
 | `pnpm check:selection` | 真实 Chrome 像素采样验证选区高亮（需先 `pnpm demo:preview`；改过选区/行背景必跑） |
-| `pnpm publish:all` | 构建并发布三个包到 npm（流程见 `RELEASING.md`） |
+| `pnpm publish:all` | 构建并发布四个包到 npm（流程见 `RELEASING.md`） |
 
 > **每次修改后的完整流程**（本地验证 → 提交 → push → Pages/npm 更新）见根目录 [`WORKFLOW.md`](WORKFLOW.md)，必须遵循。
 
@@ -24,13 +24,14 @@ packages/utils  @editormd-next/utils    私有；通用工具（dom/事件/异�
 packages/core   editor.md-next          发布包；编辑器全部实现
 packages/vue    editor.md-next-vue      Vue 3 组件适配（发布包）
 packages/react  editor.md-next-react    React 组件适配（发布包）
+packages/collab editor.md-next-collab   协同编辑拓展包（发布包；yjs CRDT，见 docs/collab.md）
 packages/demo   @editormd-next/demo     私有；示例站（GitHub Pages 部署）
 docs/                                   用户文档（安装、配置、API、扩展语法…）
 ai-docs/                                开发文档（需求、架构决策、功能对照矩阵）
 scripts/                               构建辅助脚本
 ```
 
-**依赖方向铁律**：`demo → vue/react → core → utils`。`utils` 禁止 import 其他包；`core` 禁止 import 适配包/demo；适配包只允许 import `editor.md-next` 与各自框架（二者均外部化不打包）。utils 不单独发布（构建时打包进 core）。
+**依赖方向铁律**：`demo → vue/react → core → utils`；`collab`（协同拓展包）与 vue/react 平级（`demo → collab → core`）。`utils` 禁止 import 其他包；`core` 禁止 import 适配包/demo；适配包只允许 import `editor.md-next` 与各自框架（二者均外部化不打包）。utils 不单独发布（构建时打包进 core）。**CM6 单实例铁律**：全页只允许一份 `@codemirror/state`——core 的 es/umd 产物外置 `@codemirror/*`+`@lezer/*`（peerDependencies，ADR-007），collab 包的 peer 全外置（ADR-008），任何包都不得内联 CM6 系依赖（IIFE/CDN 产物除外）。
 
 ## 编码规范
 
@@ -43,11 +44,11 @@ scripts/                               构建辅助脚本
 - 不引入 jQuery；DOM 操作用 `@editormd-next/utils` 的 dom 封装。
 - **编辑区内任何行/元素背景必须保持半透明**（`.cm-activeLine`、`.cm-searchMatch` 等）——不透明行背景会盖住 z-index:-2 的选区绘制层，症状是"选区可用但不可见"。详见 `ai-docs/bugfix-cm6-selection-invisible.md`；改动选区/行背景必须做像素级验证。
 - **禁止 `window.alert`/`confirm`/`prompt` 等阻塞式原生弹窗**（会阻塞 JS 线程，用户明确要求）：校验错误用对话框内 `.emd-form-error` 行内提示（`showErrorHint`）。
-- 第三方重依赖（KaTeX/mermaid/markmap）一律 CDN 懒加载，禁止打进包体；hljs/markdown-it/codemirror 允许打包。
+- 第三方重依赖（KaTeX/mermaid/markmap）一律 CDN 懒加载，禁止打进包体；hljs/markdown-it/codemirror 允许打包（core 的 npm 产物中 codemirror 系例外——peer 外置，见 ADR-007）。
 
 ## 构建产物（core）
 
-- `dist/es/`（npm ESM）、`dist/umd/`（CJS require）、`dist/index.iife.js`（CDN，全局名 `editormd`）
+- `dist/es/`（npm ESM，`@codemirror/*`+`@lezer/*` 已外置为 peer）、`dist/umd/`（CJS require）、`dist/index.iife.js`（CDN，全局名 `editormd`，保持全打包自包含）
 - `dist/types/`（tsc 产出的 `*.d.ts`，构建命令 `tsc -p tsconfig.build.json`）
 - `dist/index.css` + `dist/assets/`（字体等资产）
 - TS7（native）声明产出需要显式 `rootDir`，已在 `tsconfig.build.json` 配置——不要删除。
@@ -55,5 +56,5 @@ scripts/                               构建辅助脚本
 ## 提交与里程碑
 
 - 提交信息用中文，格式：`P<N>: <做了什么>`，例如 `P2: core 骨架——CM6 集成与渲染管线`。
-- 每个阶段（P0~P11，见 `TODO.md`）结束时保证：`pnpm typecheck`、`pnpm test`、`pnpm build` 全绿，并勾选 TODO.md 对应项。
+- 每个阶段（P0~P12，见 `TODO.md`）结束时保证：`pnpm typecheck`、`pnpm test`、`pnpm build` 全绿，并勾选 TODO.md 对应项。
 - 功能完成度以 `ai-docs/feature-parity.md` 为准，实现一项勾一项。

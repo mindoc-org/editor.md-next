@@ -4,7 +4,18 @@
 
 > 目标：协同编辑拓展包 `editor.md-next-collab` 首发 + core npm 产物外置化 `@codemirror/*`（ADR-007/008，见 `ai-docs/collab-design.md`）。随 P12 推进补充条目，发布时定稿。
 
-### Added（已落地）
+### Added
+
+- **协同编辑拓展包 `editor.md-next-collab`**（yjs CRDT）：多人实时编辑（断线重连自动合并）、远程光标/选区（用户名+颜色，背景半透明）、撤销只作用于自己的编辑（`Y.UndoManager` + `Prec.highest` 键位）；`CollabTransport` 通道抽象 + 内置 `websocketTransport`（连自建 relay）/`broadcastChannelTransport`（零服务端）；参考服务端 `server/relay.mjs`（约 40 行纯广播）。见 `docs/collab.md`。
+- **core npm 产物外置 `@codemirror/*` + `@lezer/*`（转 peerDependencies）**：宿主注入的 CM6 扩展与 core 共享同一实例，`editor.extensions` 对 npm 用户真正可用；UMD 产物 1.98MB → 406KB。CDN/IIFE 产物保持全打包自包含。包管理器（npm ≥ 7 / pnpm）安装时自动带上 peer 依赖。
+- demo 新增「协同编辑」示例（BroadcastChannel 同页双编辑器，静态站可演示）。
+- vue 组件通过 `defineExpose` 暴露编辑器实例（与 react 句柄对齐）。
+
+### Fixed
+
+- 协同光标发布：y-codemirror.next 内置发布以 `document.hasFocus()` 为门槛（后台标签页永不发布、失焦不清除残留），拓展包改用编辑器自身焦点语义（聚焦发布选区、失焦清除）。
+
+### Added（2026-11-08 已落地）
 
 - **离线/内网支持**：CDN 地址粒度化（`markmapBase` → `d3Js` / `markmapLibJs` / `markmapViewJs`），全部地址支持相对路径（可指向宿主 public 目录自托管）；emoji 新增 `markdown.emojiMode: 'unicode'` 渲染模式（GitHub/Twemoji 渲染为 Unicode 字符，完全离线可用）。见 `docs/offline.md`。
 

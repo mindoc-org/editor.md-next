@@ -13,6 +13,9 @@
       ],
       "editor.md-next-react": [
         "../react/src/index.ts"
+      ],
+      "editor.md-next-collab": [
+        "../collab/src/index.ts"
       ]
     }
   },

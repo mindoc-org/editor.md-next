@@ -38,7 +38,7 @@ CDN 方式（全局 `editormd` 命名空间）：
 
 ## 特性
 
-- **产物自包含**：ESM + UMD + CDN IIFE + `*.d.ts` + CSS；KaTeX / mermaid / markmap 按需 CDN 懒加载
+- **产物**：ESM + UMD + CDN IIFE + `*.d.ts` + CSS；npm 产物中 `@codemirror/*` / `@lezer/*` 为 peer 依赖（包管理器自动安装，全页共享同一 CM6 实例，宿主可注入任意 CM6 扩展），markdown-it / hljs / DOMPurify 打包在内；KaTeX / mermaid / markmap 按需 CDN 懒加载
 - **编辑器**：CodeMirror 6（GFM）、工具栏三模式 + 下拉组、11 个对话框、30+ 快捷键、搜索面板
 - **渲染扩展**：[TOC]/[TOCM]、四类 emoji、KaTeX 公式、mermaid 图表、markmap 脑图、callouts、分页符、图片尺寸对齐
 - **其他**：同步滚动、全窗口预览、全屏、图片上传（兼容原版服务端协议）+ 粘贴/拖拽、深浅主题、i18n（zh-cn/en/zh-tw）
@@ -47,7 +47,7 @@ CDN 方式（全局 `editormd` 命名空间）：
 
 完整文档见 GitHub 仓库 [`docs/`](https://github.com/mindoc-org/editor.md-next/tree/main/docs) 目录：[快速上手](https://github.com/mindoc-org/editor.md-next/blob/main/docs/getting-started.md) · [配置项](https://github.com/mindoc-org/editor.md-next/blob/main/docs/configuration.md) · [API](https://github.com/mindoc-org/editor.md-next/blob/main/docs/api.md) · [扩展语法](https://github.com/mindoc-org/editor.md-next/blob/main/docs/markdown-extensions.md)。
 
-配套适配包：[`editor.md-next-vue`](https://www.npmjs.com/package/editor.md-next-vue) · [`editor.md-next-react`](https://www.npmjs.com/package/editor.md-next-react)
+配套适配包：[`editor.md-next-vue`](https://www.npmjs.com/package/editor.md-next-vue) · [`editor.md-next-react`](https://www.npmjs.com/package/editor.md-next-react) · [`editor.md-next-collab`](https://www.npmjs.com/package/editor.md-next-collab)（协同编辑）
 
 ## License
 

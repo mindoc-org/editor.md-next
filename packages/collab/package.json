@@ -1,0 +1,70 @@
+{
+  "name": "editor.md-next-collab",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Real-time collaboration extension for editor.md-next (Yjs CRDT: remote cursors, offline merge, dumb-relay server)",
+  "keywords": [
+    "markdown",
+    "editor",
+    "editormd",
+    "collaboration",
+    "collab",
+    "realtime",
+    "crdt",
+    "yjs",
+    "codemirror",
+    "codemirror6"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mindoc-org/editor.md-next.git"
+  },
+  "homepage": "https://github.com/mindoc-org/editor.md-next#readme",
+  "bugs": {
+    "url": "https://github.com/mindoc-org/editor.md-next/issues"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "server"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm -w build"
+  },
+  "dependencies": {
+    "lib0": "^0.2.42",
+    "y-codemirror.next": "^0.3.6",
+    "y-protocols": "^1.0.6"
+  },
+  "peerDependencies": {
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "editor.md-next": "^0.2.0",
+    "yjs": "^13.5.6"
+  },
+  "devDependencies": {
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.0",
+    "editor.md-next": "workspace:*",
+    "ws": "^8.18.0",
+    "yjs": "^13.6.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
+}

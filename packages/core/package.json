@@ -49,6 +49,11 @@
     "prepublishOnly": "pnpm -w build"
   },
   "dependencies": {
+    "dompurify": "^3.4.17",
+    "highlight.js": "^11.12.0",
+    "markdown-it": "^15.0.3"
+  },
+  "peerDependencies": {
     "@codemirror/autocomplete": "^6.20.4",
     "@codemirror/commands": "^6.10.0",
     "@codemirror/lang-markdown": "^6.5.2",
@@ -57,13 +62,19 @@
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.0",
-    "@lezer/highlight": "^1.2.1",
-    "dompurify": "^3.4.17",
-    "highlight.js": "^11.12.0",
-    "markdown-it": "^15.0.3"
+    "@lezer/highlight": "^1.2.1"
   },
   "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.10.0",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.11.0",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/search": "^6.5.11",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.0",
     "@editormd-next/utils": "workspace:*",
+    "@lezer/highlight": "^1.2.1",
     "codemirror": "^6.0.2"
   },
   "publishConfig": {
